@@ -1,0 +1,28 @@
+.App {
+  text-align: center;
+}
+
+header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+main {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.map-container {
+  width: 60%;
+}
+
+.traffic-info {
+  width: 30%;
+}
+
+.traffic-info ul {
+  list-style-type: none;
+  padding: 0;
+}
