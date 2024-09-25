@@ -1,0 +1,87 @@
+/* src/ConstructionMapApp.css */
+/* Assuming there's a class for the map */
+.construction-map {
+  position: relative; /* or absolute if needed */
+  z-index: 1000; /* Make sure this is lower than the dialog */
+}
+.map-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  .header {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    z-index: 1000;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .button-group {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 1000;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+/* src/ConstructionMapApp.css */
+
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Ensure this is higher than the map's z-index */
+}
+
+.dialog-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  z-index: 2001; /* Ensure this is higher than the backdrop */
+}
+.category-selection {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.button-group {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 1000;
+}
+.leaflet-marker-icon {
+  width: 25px; /* Adjust based on your icon size */
+  height: 41px; /* Adjust based on your icon size */
+}

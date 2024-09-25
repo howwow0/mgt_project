@@ -1,1 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?> <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><defs><style> .cls-1 { fill: #353434; stroke: #000; stroke-width: 1px; fill-rule: evenodd; } </style></defs><path id="Прямоугольник_1" data-name="Прямоугольник 1" class="cls-1" d="M983,502v69H710V502h40v-1L710,390v2L599,574l-5-1L484,390l-2,1L444,502h40v69H211V502h53L445,47l2,1L597,311h1L749,47l2,1L930,502h53Z"></path></svg> 
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 width="125px" height="85.9px" viewBox="337.5 232.3 125 85.9" xml:space="preserve"
+	>
+<polygon fill="#FF0013" points="453.9,306.2 424.7,232.3 400,275.5 375.4,232.3 346.1,306.2 337.5,306.2 337.5,317.4 381.7,317.4 
+	381.7,306.2 375.1,306.2 381.5,287.8 400,318.2 418.5,287.8 424.9,306.2 418.3,306.2 418.3,317.4 462.5,317.4 462.5,306.2 "/>
+</svg>
