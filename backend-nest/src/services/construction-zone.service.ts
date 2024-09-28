@@ -11,7 +11,7 @@ export class ConstructionZoneService {
     private readonly constructionZoneRepository: Repository<ConstructionZone>,
   ) {}
 
-  async findAll(): Promise<ConstructionZone[]> {
+  async findAll(): Promise<any[]> {
     const zones = await this.constructionZoneRepository.find({
       relations: [
         'zoneMetroTraffic.metro_station', // Получение данных о метро
@@ -19,6 +19,45 @@ export class ConstructionZoneService {
         'constructionZoneArea.construction_type', // Получение данных о типах строительства
       ],
     });
-    return zones;
+    return zones.map((zone) => ({
+      ...zone,
+      zoneMetroTraffic: zone.zoneMetroTraffic.map((metro) => {
+        return {
+          ...metro,
+          new_traffic: (function () {
+            // Логика расчета трафика на основе metro и queryParams
+
+            return (
+              Number(metro.metro_station.morning_traffic) +
+              Number(metro.metro_station.evening_traffic)
+            );
+            // Пример
+          })(),
+          is_effective: (function () {
+            // Логика проверки эффективности
+            return (
+              metro.metro_station.evening_traffic >
+              metro.metro_station.morning_traffic
+            ); // Пример
+          })(),
+        };
+      }),
+      zoneRoadTraffic: zone.zoneRoadTraffic.map((road) => {
+        return {
+          ...road,
+          new_traffic: (function () {
+            // Логика расчета трафика
+            return (
+              Number(road.road.morning_traffic) +
+              Number(road.road.evening_traffic)
+            ); // Пример
+          })(),
+          is_effective: (function () {
+            // Логика проверки эффективности
+            return road.road.evening_traffic > road.road.morning_traffic; // Пример
+          })(),
+        };
+      }),
+    }));
   }
 }
