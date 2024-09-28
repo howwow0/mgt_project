@@ -1,13 +1,16 @@
-// src/App.js
-import React from "react";
-import ConstructionApp from "./components/ConstructionMapApp";
+import React from 'react';
+import MapComponent from './components/MapComponent';
+import './styles/App.css';
+import LayerControl from './components/LayerControl';
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <ConstructionApp/>
+      <MapComponent>
+        <LayerControl/>
+      </MapComponent>
     </div>
   );
-}
+};
 
 export default App;

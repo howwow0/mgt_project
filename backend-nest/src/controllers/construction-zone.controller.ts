@@ -15,6 +15,11 @@ import {
 
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { ConstructionZone } from '../entities/construction_zones.entity';
+import { CreateRoadDto, UpdateRoadDto } from '../dto/road.dto';
+import {
+  CreateMetroStationDto,
+  UpdateMetroStationDto,
+} from '../dto/metro-station.dto';
 
 @ApiTags('construction-zones')
 @Controller('construction-zones')
@@ -24,11 +29,31 @@ export class ConstructionZoneController {
   ) {}
 
   @Post()
-  @ApiResponse({ status: 201, description: 'Create a new construction zone' })
   async create(
     @Body() createConstructionZoneDto: CreateConstructionZoneDto,
-  ): Promise<ConstructionZone> {
-    return this.constructionZoneService.create(createConstructionZoneDto);
+    @Body('metroStations') metroStationDtos: CreateMetroStationDto[], // Массив DTO для метро
+    @Body('roads') roadDtos: CreateRoadDto[], // Массив DTO для дорог
+  ) {
+    return this.constructionZoneService.create(
+      createConstructionZoneDto,
+      metroStationDtos,
+      roadDtos,
+    );
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateConstructionZoneDto: UpdateConstructionZoneDto,
+    @Body('metroStations') metroStationDtos: UpdateMetroStationDto[], // Массив DTO для метро
+    @Body('roads') roadDtos: UpdateRoadDto[], // Массив DTO для дорог
+  ) {
+    return this.constructionZoneService.update(
+      id,
+      updateConstructionZoneDto,
+      metroStationDtos,
+      roadDtos,
+    );
   }
 
   @Get()
@@ -41,15 +66,6 @@ export class ConstructionZoneController {
   @ApiResponse({ status: 200, description: 'Get a construction zone by ID' })
   async findOne(@Param('id') id: number): Promise<ConstructionZone> {
     return this.constructionZoneService.findOne(id);
-  }
-
-  @Put(':id')
-  @ApiResponse({ status: 200, description: 'Update an existing construction zone' })
-  async update(
-    @Param('id') id: number,
-    @Body() updateConstructionZoneDto: UpdateConstructionZoneDto,
-  ): Promise<ConstructionZone> {
-    return this.constructionZoneService.update(id, updateConstructionZoneDto);
   }
 
   @Delete(':id')

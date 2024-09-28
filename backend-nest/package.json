@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "run":"npx ts-node src/main.ts",
+    "run": "npx ts-node src/main.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -24,6 +24,7 @@
     "@nestjs/swagger": "^7.4.2",
     "@nestjs/typeorm": "^10.0.2",
     "class-validator": "^0.14.1",
+    "cors": "^2.8.5",
     "geojson": "^0.5.0",
     "pg": "^8.13.0",
     "reflect-metadata": "^0.2.0",
