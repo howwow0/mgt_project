@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Polyline, Polygon, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, Polygon, Marker, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { fetchMetro } from "../api/metroApi";
-import { fetchRoads } from "../api/roadsApi";
+import L, { icon } from 'leaflet';
 import { fetchConstructionZones } from "../api/constructionsApi";
 import LayerControl from "./LayerControl"; // Import the LayerControl component
 import metro from '../resources/metro.svg'
+
 const metroIcon = L.icon({
   iconUrl: metro,
   iconSize: [25, 25],
@@ -14,9 +13,7 @@ const metroIcon = L.icon({
 });
 
 const MapComponent = () => {
-  const [metro, setMetro] = useState([]);
-  const [roads, setRoads] = useState([]);
-  const [constructionZones, setConstructionZones] = useState([]);
+  const [constructionZones, setConstructionZones] = useState(null);
 
   // State to manage layer visibility
   const [visibleLayers, setVisibleLayers] = useState({
@@ -27,19 +24,21 @@ const MapComponent = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const metroData = await fetchMetro();
-      const roadsData = await fetchRoads();
+      try{
       const constructionZonesData = await fetchConstructionZones();
-
-      setMetro(metroData);
-      setRoads(roadsData);
-      console.log(metroData);
       setConstructionZones(constructionZonesData);
+      }
+      catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     loadData();
   }, []);
 
+  if (!constructionZones) {
+    return <div>Загрузка...</div>;
+  }
   // Handle layer toggle logic
   const handleLayerToggle = (layer) => {
     setVisibleLayers(prevState => ({
@@ -57,37 +56,55 @@ const MapComponent = () => {
         style={{ height: '100vh', width: '100%' }}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      {constructionZones.map((zone) => (
+        <React.Fragment key={zone.id}>
+          {/* Отображение зоны */}
+          <Polygon positions={zone.area.coordinates[0].map(coord => [coord[1], coord[0]])} color="blue">
+            <Popup>{zone.name}</Popup>
+          </Polygon>
 
-        {/* Roads layer (toggle visibility) */}
-        {visibleLayers.roads && roads.map((road) => (
-          <Polyline
-            key={road.id}
-            positions={road.road.geometry.coordinates.map(coord => [coord[1], coord[0]])}
-            color="blue"
-          />
-        ))}
+          {/* Отображение метростанций */}
+          {zone.zoneMetroTraffic.map((metro) => (
+            <Marker
+              key={metro.metro_station.id}
+              position={[
+                metro.metro_station.position.coordinates[1],
+                metro.metro_station.position.coordinates[0],
+              ]}
+              icon={metroIcon}
+            >
+              <Popup>
+                {metro.metro_station.name} <br />
+                Утренний трафик: {metro.metro_station.morning_traffic} <br />
+                Вечерний трафик: {metro.metro_station.evening_traffic} <br />
+                Прогнозируемый трафик: {metro.new_traffic} <br />
+                {metro.is_effective ? "Трафик эффективен": "Трафик неэффективен"} <br />
+              </Popup>
+            </Marker>
+          ))}
 
-        {/* Metro layer (toggle visibility) */}
-        {visibleLayers.metro && metro.map((station) => (
-          <Marker
-            key={station.id}
-            position={[station.metro_station.position.coordinates[1], station.metro_station.position.coordinates[0]]}
-            icon={metroIcon}
-          />
-        ))}
-
-        {/* Construction zones layer (toggle visibility) */}
-        {visibleLayers.construction && constructionZones.map((zone) => (
-          <Polygon
-            key={zone.id}
-            positions={zone.area.coordinates[0].map(coord => [coord[1], coord[0]])}
-            color="red"
-          />
-        ))}
-      </MapContainer>
+          {/* Отображение дорог */}
+          {zone.zoneRoadTraffic.map((road) => (
+            <Polyline
+              key={road.road.id}
+              positions={road.road.geometry.coordinates.map(coord => [coord[1], coord[0]])}
+              color="red"
+            >
+              <Popup>
+                {road.road.name} <br />
+                Утренний трафик: {road.road.morning_traffic} <br />
+                Вечерний трафик: {road.road.evening_traffic} <br />
+                Прогнозируемый трафик: {road.new_traffic} <br />
+                {road.is_effective ? "Трафик эффективен": "Трафик неэффективен"} <br />
+              </Popup>
+            </Polyline>
+          ))}
+        </React.Fragment>
+      ))}
+    </MapContainer>
     </div>
   );
 };

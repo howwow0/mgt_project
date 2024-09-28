@@ -19,13 +19,14 @@ export class ConstructionZoneService {
         'constructionZoneArea.construction_type', // Получение данных о типах строительства
       ],
     });
+
     return zones.map((zone) => ({
       ...zone,
       zoneMetroTraffic: zone.zoneMetroTraffic.map((metro) => {
         return {
           ...metro,
           new_traffic: (function () {
-            // Логика расчета трафика на основе metro и queryParams
+            // Логика расчета трафика
 
             return (
               Number(metro.metro_station.morning_traffic) +
