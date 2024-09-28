@@ -1,15 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 import { Point } from 'geojson';
 
 @Entity('metro_stations')
+@Unique(['name'])
 export class MetroStation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   name: string;
 
-  @Column({ type: 'geography', spatialFeatureType: 'Point', srid: 4326 })
+  @Column('geography', { spatialFeatureType: 'Point', srid: 4326 })
   position: Point;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -18,6 +19,6 @@ export class MetroStation {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   evening_traffic: number;
 
-  @Column({ type: 'integer' })
+  @Column()
   capacity: number;
 }
