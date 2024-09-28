@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsNumber, IsDecimal } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsDecimal,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRoadDto {
@@ -29,26 +35,26 @@ export class CreateRoadDto {
 
 export class UpdateRoadDto {
   @ApiProperty({ description: 'The name of the road' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
 
   @ApiProperty({ description: 'The geometry of the road' })
-  @IsNotEmpty()
+  @IsOptional()
   geometry: { type: 'LineString'; coordinates: number[][] };
 
   @ApiProperty({ description: 'Morning traffic count' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsDecimal({ decimal_digits: '10,2' })
   morning_traffic: number;
 
   @ApiProperty({ description: 'Evening traffic count' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsDecimal({ decimal_digits: '10,2' })
   evening_traffic: number;
 
   @ApiProperty({ description: 'The capacity of the road' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   capacity: number;
 }

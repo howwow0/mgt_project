@@ -2,13 +2,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Road } from '../entities/roads.entity';
-import { Repository } from 'typeorm';
+import { RoadRepository } from '../repositories/road.repository';
 
 @Injectable()
 export class RoadService {
   constructor(
     @InjectRepository(Road)
-    private readonly roadRepository: Repository<Road>,
+    private readonly roadRepository: RoadRepository,
   ) {}
 
   async findAll(): Promise<Road[]> {

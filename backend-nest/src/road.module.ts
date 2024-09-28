@@ -9,6 +9,5 @@ import { Road } from './entities/roads.entity';
   imports: [TypeOrmModule.forFeature([Road])], // Import the Road entity
   controllers: [RoadController],
   providers: [RoadRepository, RoadService],
-  exports: [RoadService], // Export if needed elsewhere
 })
 export class RoadModule {}
