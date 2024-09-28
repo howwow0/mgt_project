@@ -14,17 +14,11 @@ export class ConstructionZoneService {
   async findAll(): Promise<ConstructionZone[]> {
     const zones = await this.constructionZoneRepository.find({
       relations: [
-        'constructionType',
-        'zoneMetroTraffic.metro_station',
-        'zoneRoadTraffic.road',
+        'zoneMetroTraffic.metro_station', // Получение данных о метро
+        'zoneRoadTraffic.road', // Получение данных о дорогах
+        'constructionZoneArea.construction_type', // Получение данных о типах строительства
       ],
     });
-
-    return zones.map((zone) => {
-    //  zone.zoneMetroTraffic.forEach(p=>{
-       //toDO calc
-      //});
-      return zone;
-    });
+    return zones;
   }
 }
