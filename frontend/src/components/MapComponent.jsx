@@ -33,6 +33,7 @@ const MapComponent = () => {
 
       setMetro(metroData);
       setRoads(roadsData);
+      console.log(metroData);
       setConstructionZones(constructionZonesData);
     };
 
@@ -64,7 +65,7 @@ const MapComponent = () => {
         {visibleLayers.roads && roads.map((road) => (
           <Polyline
             key={road.id}
-            positions={road.geometry.coordinates.map(coord => [coord[1], coord[0]])}
+            positions={road.road.geometry.coordinates.map(coord => [coord[1], coord[0]])}
             color="blue"
           />
         ))}
@@ -73,7 +74,7 @@ const MapComponent = () => {
         {visibleLayers.metro && metro.map((station) => (
           <Marker
             key={station.id}
-            position={[station.position.coordinates[1], station.position.coordinates[0]]}
+            position={[station.metro_station.position.coordinates[1], station.metro_station.position.coordinates[0]]}
             icon={metroIcon}
           />
         ))}

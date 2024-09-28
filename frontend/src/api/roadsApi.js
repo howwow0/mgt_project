@@ -4,9 +4,10 @@ const API_URL = 'http://localhost:3000/construction-zones'; // Замените 
 
 export const fetchRoads = async () => {
     const response = await axios.get(API_URL);
-    let raw_json =  response.data;
-    console.log(raw_json);
-    return raw_json['zoneRoadTraffic'];
-};
+    const raw_json = response.data;
 
-// Добавьте другие функции для работы с дорогами, если нужно
+    // Собираем все данные о трафике дорог из каждого объекта строительной зоны
+    const allRoadTraffic = raw_json.flatMap((zone) => zone.zoneRoadTraffic);
+
+    return allRoadTraffic;
+};
