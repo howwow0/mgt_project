@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Polygon } from 'geojson';
-import { ConstructionType } from './construction_types.entity'; // Импортируем сущность
-
+import { ConstructionType } from './construction_types.entity';
+import { ZoneMetroTraffic } from './zone_metro_traffic.entity';
+import { ZoneRoadTraffic } from './zone_road_traffic.entity';
 @Entity('construction_zones')
 export class ConstructionZone {
   @PrimaryGeneratedColumn()
@@ -25,4 +27,13 @@ export class ConstructionZone {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   zone_area: number;
+
+  @OneToMany(
+    () => ZoneMetroTraffic,
+    (zoneMetroTraffic) => zoneMetroTraffic.zone,
+  )
+  zoneMetroTraffic: ZoneMetroTraffic[];
+
+  @OneToMany(() => ZoneRoadTraffic, (zoneRoadTraffic) => zoneRoadTraffic.zone)
+  zoneRoadTraffic: ZoneRoadTraffic[];
 }

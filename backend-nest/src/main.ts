@@ -9,7 +9,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type',
     credentials: true,
-});
+  });
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Construction API')

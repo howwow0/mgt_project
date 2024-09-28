@@ -40,7 +40,7 @@ CREATE TABLE construction_zones (
     name VARCHAR(100) NOT NULL,                    -- Название проекта
     area GEOGRAPHY(POLYGON, 4326) NOT NULL,        -- Географическое положение строительной зоны (полигон)
     construction_type_id INTEGER NOT NULL,	       -- Тип площади
-    zone_area DECIMAL(10, 2) NOT NULL             -- Площадь зоны (м²)
+    zone_area DECIMAL(10, 2) NOT NULL              -- Площадь зоны (м²)
 );
 
 -- Создание таблицы для траффика станций метро в зоне строительства

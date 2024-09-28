@@ -13,7 +13,7 @@ export class ZoneRoadTraffic {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ConstructionZone, (zone) => zone.id)
+  @ManyToOne(() => ConstructionZone, (zone) => zone.zoneRoadTraffic)
   @JoinColumn({ name: 'zone_id' })
   zone: ConstructionZone;
 

@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RoadModule } from './road.module';
 import { AppDataSource } from './ormconfig';
 import { ConstructionZoneModule } from './construction-zone.module';
-import { MetroStationZoneModule } from './metro-station.module';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -12,8 +10,6 @@ import { MetroStationZoneModule } from './metro-station.module';
         return AppDataSource.options;
       },
     }),
-    RoadModule,
-    MetroStationZoneModule,
     ConstructionZoneModule,
   ],
 })

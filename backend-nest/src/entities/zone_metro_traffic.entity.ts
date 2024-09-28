@@ -13,11 +13,11 @@ export class ZoneMetroTraffic {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ConstructionZone, (zone) => zone.id)
+  @ManyToOne(() => ConstructionZone, (zone) => zone.zoneMetroTraffic)
   @JoinColumn({ name: 'zone_id' })
   zone: ConstructionZone;
 
-  @ManyToOne(() => MetroStation, (metro_station) => metro_station.id)
+  @ManyToOne(() => MetroStation, (metroStation) => metroStation.id)
   @JoinColumn({ name: 'metro_station_id' })
   metro_station: MetroStation;
 
