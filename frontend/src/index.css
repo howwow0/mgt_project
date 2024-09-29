@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* we don't support our enemy. */
+.leaflet-attribution-flag 
+{
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+/* works but hides the OSM copyright */
+.leaflet-control-attribution
+{
+  visibility: hidden;
+}
