@@ -1,4 +1,4 @@
-// src/utils/TrafficUtils.ts
+//src/utils/TrafficUtils.ts
 
 export class TrafficUtils {
   // Growth of population based on area
@@ -54,3 +54,5 @@ export class TrafficUtils {
     return newPassengerTraffic - trafficCapacity > 0;
   }
 }
+
+
