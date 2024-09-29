@@ -5,9 +5,9 @@ import LayerControl from './components/LayerControl';
 
 const App = () => {
   return (
-    <div className="App">
+    <div className="App"> 
       <MapComponent>
-        <LayerControl/>
+        <LayerControl />
       </MapComponent>
     </div>
   );

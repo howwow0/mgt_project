@@ -2,5 +2,13 @@
   "name": "mgt_project",
   "version": "1.0.0",
   "author": "HackStreet Boys",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "scripts": {
+    "all": "concurrently \"npm run run  --prefix backend-nest/ \" \"npm run dev  --prefix frontend/ \"",
+    "frontend":"npm run dev  --prefix frontend/ ",
+    "backend" : "npm run run  --prefix backend-nest/"
+  }
 }
