@@ -2,5 +2,8 @@
   "name": "mgt_project",
   "version": "1.0.0",
   "author": "HackStreet Boys",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^9.0.1"
+  }
 }
