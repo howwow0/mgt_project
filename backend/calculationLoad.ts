@@ -121,6 +121,7 @@ class CalculationLoad{
         addMetroLoad = this.allOccupancy ? 
             newWorker * this.rideToCentre * this.proportionPublicTransport / 10000 : 
             newWorker * this.rideToCentre * this.proportionPublicTransport * this.partCitizenRushHour / 1000000;
+            
         addRoadLoad = this.allOccupancy ?
             newWorker * this.rideToCentre * (100 - this.proportionPublicTransport) / 10000 : 
             newWorker * this.rideToCentre * (100 - this.proportionPublicTransport) * this.partCitizenRushHour / 1000000;
