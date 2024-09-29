@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppDataSource } from './ormconfig';
+import { AppDataSource } from './configs/ormconfig';
 import { ConstructionZoneModule } from './construction-zone.module';
 @Module({
   imports: [

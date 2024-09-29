@@ -10,6 +10,6 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   migrationsRun: false,
   database: 'construction_db',
-  entities: ['./src/entities/*.ts'],
+  entities: ['**/*.entity.{ts,js}'],
   migrations: ['src/migrations/*.ts'],
 });

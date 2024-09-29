@@ -1,5 +1,3 @@
 // src/utils/TrafficUtils.ts
 
-export class TrafficUtils {
-
-}
+export class TrafficUtils {}
