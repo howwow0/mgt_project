@@ -15,6 +15,8 @@ function TypePassangerGrowth(passangerGrowth, type){
     return type * passangerGrowth;
 }
 
+//TODO: перевести число людей в количество машин/час
+
 //сумма узлов пассажиропотока (и для ИТ, и для ОТ)
 function PassangerTraffic(nodeArray, countNode, transportFactor = 1){
     let sum = 0;
@@ -29,6 +31,8 @@ function NewPassangerTraffic(passangerTraffic, typePassangerGrowth){
     return passangerTraffic + typePassangerGrowth;
 }
 
+//TODO: уточнить, посчитано ли для узла или для прироста узла
+
 //новый пассажиропоток на узле
 function NewNodePassangerTraffic(typePassangerGrowth, passangerTraffic, nodePassangerTraffic){
     return typePassangerGrowth * nodePassangerTraffic / passangerTraffic;
@@ -36,13 +40,15 @@ function NewNodePassangerTraffic(typePassangerGrowth, passangerTraffic, nodePass
 
 //наличие дефицита
 function Delta(newPassangerTraffic, trafficCapacity){
-    if (newPassangerTraffic - trafficCapacity > 0){
+    if (trafficCapacity - newPassangerTraffic > 0){
         return true;
     }
     else{
         return false;
     }
 }
+
+//TODO: сделать расчёт баллов по линейно зависимости
 
 
 
