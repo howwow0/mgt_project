@@ -11,3 +11,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+
+/* 
+We don't want any mention of Leaflet library due to the political position of author. 
+We do not support and we condemn his position.
+Opensource software must be outside the politics.
+Glory to Russia, our motherland. */
+.leaflet-attribution-flag 
+{
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+.leaflet-control-attribution
+{
+  visibility: hidden;
+}
+
+.layer-controls
+{
+  position: absolute;
+  z-index: 1000000;
+}
+
+.leaflet-custom-button {
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.leaflet-custom-button:hover {
+  background-color: #0056b3;
+}

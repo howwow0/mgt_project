@@ -5,6 +5,7 @@ import L, { icon } from 'leaflet';
 import { fetchConstructionZones } from "../api/constructionsApi";
 import LayerControl from "./LayerControl"; // Import the LayerControl component
 import metro from '../resources/metro.svg'
+import CustomLeafletToggleControl from "./CustomLeafletToggleControl";
 
 const metroIcon = L.icon({
   iconUrl: metro,
@@ -39,27 +40,31 @@ const MapComponent = () => {
   if (!constructionZones) {
     return <div>Загрузка...</div>;
   }
-  // Handle layer toggle logic
-  const handleLayerToggle = (layer) => {
+  // Handle layer toggle logic for checkbox
+  const handleLayerToggle = (layer, isChecked) => {
     setVisibleLayers(prevState => ({
       ...prevState,
-      [layer]: !prevState[layer], // Toggle the visibility of the selected layer
+      [layer]: isChecked, // Set the visibility of the layer based on the checkbox state
     }));
   };
 
   return (
-    <div>
-      <LayerControl onLayerToggle={handleLayerToggle} /> {/* Layer control with toggle handler */}
+    <div class="map-with-controls" >
+
       <MapContainer
         center={[55.746996, 37.676155]}
         zoom={13}
         style={{ height: '100vh', width: '100%' }}
       >
+              <CustomLeafletToggleControl
+        visibleLayers={visibleLayers}
+        handleLayerToggle={handleLayerToggle}
+      />
         <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {constructionZones.map((zone) => (
+      { visibleLayers.construction && constructionZones.map((zone) => (
         <React.Fragment key={zone.id}>
           {/* Отображение зоны */}
           <Polygon positions={zone.area.coordinates[0].map(coord => [coord[1], coord[0]])} color="blue">
@@ -67,13 +72,14 @@ const MapComponent = () => {
           </Polygon>
 
           {/* Отображение метростанций */}
-          {zone.zoneMetroTraffic.map((metro) => (
+          {visibleLayers.metro && zone.zoneMetroTraffic.map((metro) => (
             <Marker
               key={metro.metro_station.id}
               position={[
                 metro.metro_station.position.coordinates[1],
                 metro.metro_station.position.coordinates[0],
               ]}
+              
               icon={metroIcon}
             >
               <Popup>
@@ -87,7 +93,7 @@ const MapComponent = () => {
           ))}
 
           {/* Отображение дорог */}
-          {zone.zoneRoadTraffic.map((road) => (
+          {visibleLayers.roads && zone.zoneRoadTraffic.map((road) => (
             <Polyline
               key={road.road.id}
               positions={road.road.geometry.coordinates.map(coord => [coord[1], coord[0]])}
