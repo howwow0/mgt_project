@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// CustomLeafletToggleControl.jsx
+import React, { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -7,10 +8,9 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
   const map = useMap();
 
   useEffect(() => {
-    // Define a custom Leaflet control with checkboxes
     const CustomControl = L.Control.extend({
       options: {
-        position: 'topright', // Position of the control on the map
+        position: 'topright',
       },
       onAdd: function () {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
@@ -18,8 +18,7 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
         container.style.padding = '10px';
         container.style.boxShadow = '0 1px 5px rgba(0,0,0,0.4)';
 
-        // Create checkboxes for layers
-        const layers = Object.keys(visibleLayers); // Get layer keys from props
+        const layers = Object.keys(visibleLayers);
 
         layers.forEach((layer) => {
           const checkbox = L.DomUtil.create('input', '', container);
@@ -27,14 +26,12 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
           checkbox.checked = visibleLayers[layer];
           checkbox.id = layer;
 
-          // Create label for the checkbox
           const label = L.DomUtil.create('label', '', container);
           label.htmlFor = layer;
           label.innerHTML = ` ${layer.charAt(0).toUpperCase() + layer.slice(1)}<br/>`;
 
-          // Add event listener for checkbox change
           L.DomEvent.on(checkbox, 'change', (e) => {
-            handleLayerToggle(layer, e.target.checked); // Call the handler when checkbox is toggled
+            handleLayerToggle(layer, e.target.checked);
           });
         });
 
@@ -42,15 +39,13 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
       },
     });
 
-    // Add the custom control to the map
     const control = new CustomControl();
     map.addControl(control);
 
-    // Remove control on cleanup
     return () => {
       map.removeControl(control);
     };
-  }, [map, visibleLayers, handleLayerToggle]); // Re-run when visibleLayers or handleLayerToggle changes
+  }, [map, visibleLayers, handleLayerToggle]);
 
   return null; // This component does not render visible JSX
 };
