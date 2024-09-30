@@ -7,3 +7,4 @@
 /node_modules
 /.pnp
 .pnp.js
+backend-nest/src/configs/ormconfig.ts
