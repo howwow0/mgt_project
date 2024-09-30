@@ -1,14 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConstructionZone } from '../entities/construction_zones.entity';
-import { Repository } from 'typeorm';
-import { TrafficUtils } from '../utils/TrafficUtils'; // Импортируем утилитарный класс
+import { Repository, DataSource } from 'typeorm';
+import { TrafficUtils } from '../utils/TrafficUtils';
+import { MetroStation } from '../entities/metro_stations.entity';
+import { Road } from '../entities/roads.entity';
+import { ConstructionZoneArea } from '../entities/construction_zone_area.entity';
+import { CreateConstructionZoneDto } from '../dto/create-construction-zone.dto';
+import { ConstructionType } from '../entities/construction_types.entity';
+import { ZoneMetroTraffic } from '../entities/zone_metro_traffic.entity';
+import { ZoneRoadTraffic } from '../entities/zone_road_traffic.entity';
 
 @Injectable()
 export class ConstructionZoneService {
   constructor(
     @InjectRepository(ConstructionZone)
     private readonly constructionZoneRepository: Repository<ConstructionZone>,
+    @InjectRepository(MetroStation)
+    private readonly metroStationRepository: Repository<MetroStation>,
+    @InjectRepository(Road)
+    private readonly roadRepository: Repository<Road>,
+    @InjectRepository(ConstructionZoneArea)
+    private readonly zoneAreaRepository: Repository<ConstructionZoneArea>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(): Promise<any[]> {
@@ -183,5 +197,71 @@ export class ConstructionZoneService {
       return zone;
     });
     return newZones;
+  }
+
+  async create(
+    createConstructionZoneDto: CreateConstructionZoneDto,
+  ): Promise<ConstructionZone> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const constructionZone = new ConstructionZone();
+      constructionZone.name = createConstructionZoneDto.name;
+      constructionZone.area = createConstructionZoneDto.area;
+
+      // Сохраняем зону строительства
+      const savedZone = await queryRunner.manager.save(constructionZone);
+
+      // Создаем и сохраняем объект ConstructionZoneArea
+      const constructionZoneArea = new ConstructionZoneArea();
+      constructionZoneArea.zone_area =
+        createConstructionZoneDto.zoneArea.zone_area;
+      constructionZoneArea.construction_type =
+        await queryRunner.manager.findOne(ConstructionType, {
+          where: {
+            id: createConstructionZoneDto.zoneArea.construction_type_id,
+          }, // Используем ID
+        });
+
+      constructionZoneArea.zone = savedZone; // Связываем зону строительства
+
+      await queryRunner.manager.save(constructionZoneArea); // Сохраняем объект зоны
+      // Create road and link it
+      const road = this.roadRepository.create(createConstructionZoneDto.road);
+      await queryRunner.manager.save(road);
+      const zoneRoadTraffic = new ZoneRoadTraffic();
+      zoneRoadTraffic.zone = savedZone; // Associate with construction zone
+      zoneRoadTraffic.road = road; // Associate with the road
+      await queryRunner.manager.save(zoneRoadTraffic); // Save the relation
+      // Сохранение метро (если есть)
+      if (createConstructionZoneDto.metroStations) {
+        for (const metroDto of createConstructionZoneDto.metroStations) {
+          const metroStation = new MetroStation();
+          metroStation.name = metroDto.name;
+          metroStation.position = metroDto.position;
+          metroStation.morning_traffic = metroDto.morning_traffic;
+          metroStation.evening_traffic = metroDto.evening_traffic;
+          metroStation.capacity = metroDto.capacity;
+
+          const savedMetroStation =
+            await queryRunner.manager.save(metroStation);
+
+          const zoneMetroTraffic = new ZoneMetroTraffic();
+          zoneMetroTraffic.zone = savedZone; // Associate with construction zone
+          zoneMetroTraffic.metro_station = savedMetroStation; // Associate with metro station
+          await queryRunner.manager.save(zoneMetroTraffic); // Save the relation
+        }
+      }
+
+      await queryRunner.commitTransaction();
+      return savedZone;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error; // Обработка ошибок
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
