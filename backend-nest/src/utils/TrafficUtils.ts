@@ -12,7 +12,7 @@ export class TrafficUtils {
         let res = 0;
         zones.forEach((zone) =>{
             if(zone.construction_type.floor_area != TrafficUtils.WORKING_AREA){
-                res += (zone.zone_area / zone.construction_type.floor_area) * TrafficUtils.WORKING_SITIZEN;
+                res += Number((zone.zone_area / zone.construction_type.floor_area) * TrafficUtils.WORKING_SITIZEN);
             }
         });
         return res;
@@ -23,7 +23,7 @@ export class TrafficUtils {
         let res = 0;
         zones.forEach((zone) =>{
             if(zone.construction_type.floor_area == TrafficUtils.WORKING_AREA){
-                res += (zone.zone_area / zone.construction_type.floor_area);
+                res += Number((zone.zone_area / zone.construction_type.floor_area));
             }
         });
         return (res - (workers * (1 - TrafficUtils.TO_CENTER)));
@@ -36,11 +36,12 @@ export class TrafficUtils {
     static sumTrafficMetro(zones: any[], isMorning: Boolean): number{
         let res = 0;
         zones.forEach((zone) =>{
+            console.log(zone.metro_station);
             if(isMorning){
-                res + zone.metro_station.morning_traffic;
+               res += Number(zone.metro_station.morning_traffic);
             }
             else{
-                res + zone.metro_station.evening_traffic;
+                res += Number(zone.metro_station.evening_traffic);
             }
         });
         return res;
@@ -50,17 +51,17 @@ export class TrafficUtils {
         let res = 0;
         zones.forEach((zone) =>{
             if(isMorning){
-                res + zone.road.morning_traffic;
+                res += Number(zone.road.morning_traffic);
             }
             else{
-                res + zone.road.evening_traffic;
+                res += Number(zone.road.evening_traffic);
             }
         });
         return res;
     }
 
     static calcTraffic(addTraffic: number, oldTraffic: number, sumTraffic: number):number{
-        return addTraffic * oldTraffic / sumTraffic + oldTraffic;
+        return addTraffic * oldTraffic / sumTraffic + Number(oldTraffic);
     }
 
     //static isDeficite()

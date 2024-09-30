@@ -51,7 +51,9 @@ export class ConstructionZoneService {
         return p + (c.zone_area / c.construction_type.floor_area) * 0.57;
       }, 0); //Люди живущие в домах*/
 
-      const livingPeoples = TrafficUtils.countCitizen(zone.constructionZoneArea);
+      const livingPeoples = TrafficUtils.countCitizen(
+        zone.constructionZoneArea,
+      );
 
       /*const zoneAreaForNotLivingPeople = zones.flatMap((p) => {
         return p.constructionZoneArea.filter(
@@ -68,7 +70,10 @@ export class ConstructionZoneService {
 
       //const outWorkers = notLivingPeoples - livingPeoples * 0.2;
 
-      const outWorkers = TrafficUtils.countWorkPlace(zone.constructionZoneArea, livingPeoples);
+      const outWorkers = TrafficUtils.countWorkPlace(
+        zone.constructionZoneArea,
+        livingPeoples,
+      );
 
       console.log(outWorkers);
 
@@ -86,25 +91,38 @@ export class ConstructionZoneService {
         (c, p) => c + Number(p.metro_station.morning_traffic),
         0,
       );*/
-      const morningCountTrafficMetro = TrafficUtils.sumTrafficMetro(zone.zoneMetroTraffic, true);
+      console.log(zone.zoneMetroTraffic);
+      const morningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
+        zone.zoneMetroTraffic,
+        true,
+      );
 
       /*const eveningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
         (c, p) => c + Number(p.metro_station.evening_traffic),
         0,
       );*/
-      const eveningCountTrafficMetro = TrafficUtils.sumTrafficMetro(zone.zoneMetroTraffic, false);
+      const eveningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
+        zone.zoneMetroTraffic,
+        false,
+      );
 
       /*const morningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
         (c, p) => c + Number(p.road.morning_traffic),
         0,
       );*/
-      const morningCountTrafficRoad = TrafficUtils.sumTrafficRoad(zone.zoneMetroTraffic, true);
+      const morningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
+        zone.zoneRoadTraffic,
+        true,
+      );
 
       /*const eveningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
         (c, p) => c + Number(p.road.evening_traffic),
         0,
       );*/
-      const eveningCountTrafficRoad = TrafficUtils.sumTrafficRoad(zone.zoneMetroTraffic, false);
+      const eveningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
+        zone.zoneRoadTraffic,
+        false,
+      );
 
       console.log(morningCountTrafficMetro);
       console.log(eveningCountTrafficMetro);
@@ -116,13 +134,21 @@ export class ConstructionZoneService {
           (metroLoad * metro.metro_station.morning_traffic) /
             morningCountTrafficMetro +
           Number(metro.metro_station.morning_traffic);*/
-        metro.new_traffic_morning = TrafficUtils.calcTraffic(metroLoad, metro.metro_station.morning_traffic, morningCountTrafficMetro);
+        metro.new_traffic_morning = TrafficUtils.calcTraffic(
+          metroLoad,
+          metro.metro_station.morning_traffic,
+          morningCountTrafficMetro,
+        );
 
         /*metro.new_traffic_evening =
           (metroLoad * metro.metro_station.evening_traffic) /
             eveningCountTrafficMetro +
           Number(metro.metro_station.evening_traffic);*/
-        metro.new_traffic_evening = TrafficUtils.calcTraffic(metroLoad, metro.metro_station.evening_traffic, eveningCountTrafficMetro);
+        metro.new_traffic_evening = TrafficUtils.calcTraffic(
+          metroLoad,
+          metro.metro_station.evening_traffic,
+          eveningCountTrafficMetro,
+        );
 
         metro.is_deficit_morning =
           metro.metro_station.capacity < metro.new_traffic_morning;
@@ -135,12 +161,20 @@ export class ConstructionZoneService {
         /*road.new_traffic_morning =
           (roadLoad * road.road.morning_traffic) / morningCountTrafficRoad +
           Number(road.road.morning_traffic);*/
-        road.new_traffic_morning = TrafficUtils.calcTraffic(roadLoad, road.road.morning_traffic, morningCountTrafficRoad);
+        road.new_traffic_morning = TrafficUtils.calcTraffic(
+          roadLoad,
+          road.road.morning_traffic,
+          morningCountTrafficRoad,
+        );
 
         /*road.new_traffic_evening =
           (roadLoad * road.road.evening_traffic) / eveningCountTrafficRoad +
           Number(road.road.evening_traffic);*/
-        road.new_traffic_evening = TrafficUtils.calcTraffic(roadLoad, road.road.evening_traffic, eveningCountTrafficRoad);
+        road.new_traffic_evening = TrafficUtils.calcTraffic(
+          roadLoad,
+          road.road.evening_traffic,
+          eveningCountTrafficRoad,
+        );
 
         road.is_deficit_morning = road.road.capacity < road.new_traffic_morning;
 
