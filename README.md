@@ -44,7 +44,7 @@ npm install
 ```
 #### 2. Устанавливаем зависимости для фронтеда
 ```bash
-cd metro-frontend
+cd frontend
 npm install
 ```
 #### 3. Устанавливаем зависимости для бекенда
