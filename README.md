@@ -44,7 +44,7 @@ npm install
 
 #### Фронтенд
 ```bash
-cd metro-frontend
+cd frontend
 npm install
 ```
 
