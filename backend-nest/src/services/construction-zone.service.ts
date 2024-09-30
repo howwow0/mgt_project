@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConstructionZone } from '../entities/construction_zones.entity';
 import { Repository } from 'typeorm';
-//import { TrafficUtils } from '../utils/TrafficUtils'; // Импортируем утилитарный класс
+import { TrafficUtils } from '../utils/TrafficUtils'; // Импортируем утилитарный класс
 
 @Injectable()
 export class ConstructionZoneService {
@@ -43,15 +43,17 @@ export class ConstructionZoneService {
     }));
 
     newZones.forEach((zone) => {
-      const zoneAreaForLivingPeople = zone.constructionZoneArea.filter(
+      /*const zoneAreaForLivingPeople = zone.constructionZoneArea.filter(
         (pa) => pa.construction_type.floor_area != 35,
       );
 
       const livingPeoples = zoneAreaForLivingPeople.reduce((p, c) => {
         return p + (c.zone_area / c.construction_type.floor_area) * 0.57;
-      }, 0); //Люди живущие в домах
+      }, 0); //Люди живущие в домах*/
 
-      const zoneAreaForNotLivingPeople = zones.flatMap((p) => {
+      const livingPeoples = TrafficUtils.countCitizen(zone.constructionZoneArea);
+
+      /*const zoneAreaForNotLivingPeople = zones.flatMap((p) => {
         return p.constructionZoneArea.filter(
           (pa) => pa.construction_type.floor_area == 35,
         );
@@ -59,42 +61,50 @@ export class ConstructionZoneService {
 
       const notLivingPeoples = zoneAreaForNotLivingPeople.reduce((p, c) => {
         return p + c.zone_area / c.construction_type.floor_area;
-      }, 0);
+      }, 0);*/
 
       console.log(livingPeoples);
-      console.log(notLivingPeoples);
+      //console.log(notLivingPeoples);
 
-      const outWorkers = notLivingPeoples - livingPeoples * 0.2;
+      //const outWorkers = notLivingPeoples - livingPeoples * 0.2;
+
+      const outWorkers = TrafficUtils.countWorkPlace(zone.constructionZoneArea, livingPeoples);
 
       console.log(outWorkers);
 
-      const metroLoad = (livingPeoples * 0.8 * 0.7 + outWorkers * 0.7) / 1000;
+      //const metroLoad = (livingPeoples * 0.8 * 0.7 + outWorkers * 0.7) / 1000;
+      const metroLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, true);
 
       console.log(metroLoad);
 
-      const roadLoad = (livingPeoples * 0.8 * 0.3 + outWorkers * 0.3) / 1.2;
+      //const roadLoad = (livingPeoples * 0.8 * 0.3 + outWorkers * 0.3) / 1.2;
+      const roadLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, false);
 
       console.log(roadLoad);
 
-      const morningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
+      /*const morningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
         (c, p) => c + Number(p.metro_station.morning_traffic),
         0,
-      );
+      );*/
+      const morningCountTrafficMetro = TrafficUtils.sumTrafficMetro(zone.zoneMetroTraffic, true);
 
-      const eveningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
+      /*const eveningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
         (c, p) => c + Number(p.metro_station.evening_traffic),
         0,
-      );
+      );*/
+      const eveningCountTrafficMetro = TrafficUtils.sumTrafficMetro(zone.zoneMetroTraffic, false);
 
-      const morningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
+      /*const morningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
         (c, p) => c + Number(p.road.morning_traffic),
         0,
-      );
+      );*/
+      const morningCountTrafficRoad = TrafficUtils.sumTrafficRoad(zone.zoneMetroTraffic, true);
 
-      const eveningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
+      /*const eveningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
         (c, p) => c + Number(p.road.evening_traffic),
         0,
-      );
+      );*/
+      const eveningCountTrafficRoad = TrafficUtils.sumTrafficRoad(zone.zoneMetroTraffic, false);
 
       console.log(morningCountTrafficMetro);
       console.log(eveningCountTrafficMetro);
@@ -102,15 +112,17 @@ export class ConstructionZoneService {
       console.log(eveningCountTrafficRoad);
 
       zone.zoneMetroTraffic.forEach((metro) => {
-        metro.new_traffic_morning =
+        /*metro.new_traffic_morning =
           (metroLoad * metro.metro_station.morning_traffic) /
             morningCountTrafficMetro +
-          Number(metro.metro_station.morning_traffic);
+          Number(metro.metro_station.morning_traffic);*/
+        metro.new_traffic_morning = TrafficUtils.calcTraffic(metroLoad, metro.metro_station.morning_traffic, morningCountTrafficMetro);
 
-        metro.new_traffic_evening =
+        /*metro.new_traffic_evening =
           (metroLoad * metro.metro_station.evening_traffic) /
             eveningCountTrafficMetro +
-          Number(metro.metro_station.evening_traffic);
+          Number(metro.metro_station.evening_traffic);*/
+        metro.new_traffic_evening = TrafficUtils.calcTraffic(metroLoad, metro.metro_station.evening_traffic, eveningCountTrafficMetro);
 
         metro.is_deficit_morning =
           metro.metro_station.capacity < metro.new_traffic_morning;
@@ -120,13 +132,15 @@ export class ConstructionZoneService {
       });
 
       zone.zoneRoadTraffic.forEach((road) => {
-        road.new_traffic_morning =
+        /*road.new_traffic_morning =
           (roadLoad * road.road.morning_traffic) / morningCountTrafficRoad +
-          Number(road.road.morning_traffic);
+          Number(road.road.morning_traffic);*/
+        road.new_traffic_morning = TrafficUtils.calcTraffic(roadLoad, road.road.morning_traffic, morningCountTrafficRoad);
 
-        road.new_traffic_evening =
+        /*road.new_traffic_evening =
           (roadLoad * road.road.evening_traffic) / eveningCountTrafficRoad +
-          Number(road.road.evening_traffic);
+          Number(road.road.evening_traffic);*/
+        road.new_traffic_evening = TrafficUtils.calcTraffic(roadLoad, road.road.evening_traffic, eveningCountTrafficRoad);
 
         road.is_deficit_morning = road.road.capacity < road.new_traffic_morning;
 
