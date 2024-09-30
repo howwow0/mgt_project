@@ -24,6 +24,11 @@ export class ConstructionZoneController {
   @ApiResponse({
     status: 201,
     description: 'Create a new construction zone with metro and roads',
+    type: ConstructionZone,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input data',
   })
   async createZone(
     @Body() createConstructionZoneDto: CreateConstructionZoneDto,
