@@ -64,22 +64,26 @@ const MapComponent = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      { visibleLayers.construction && constructionZones.map((zone) => (
+
+   {/* Render all, not construction zones*/}
+      {constructionZones.map((zone) => (
         <React.Fragment key={zone.id}>
-          {/* Отображение зоны */}
-          <Polygon positions={zone.area.coordinates[0].map(coord => [coord[1], coord[0]])} color="blue">
-            <Popup>{zone.name}</Popup>
+          {/* render construction zones */}
+          <Polygon 
+            positions={visibleLayers.construction && zone.area.coordinates[0].map(coord => [coord[1], coord[0]])}
+            color="blue"
+          >
+            <Popup>{visibleLayers.construction && zone.name}</Popup>
           </Polygon>
 
-          {/* Отображение метростанций */}
+          {/* render metro*/}
           {visibleLayers.metro && zone.zoneMetroTraffic.map((metro) => (
             <Marker
               key={metro.metro_station.id}
               position={[
-                metro.metro_station.position.coordinates[1],
-                metro.metro_station.position.coordinates[0],
+                metro.metro_station.position.coordinates[1], 
+                metro.metro_station.position.coordinates[0]
               ]}
-              
               icon={metroIcon}
             >
               <Popup>
@@ -87,12 +91,12 @@ const MapComponent = () => {
                 Утренний трафик: {metro.metro_station.morning_traffic} <br />
                 Вечерний трафик: {metro.metro_station.evening_traffic} <br />
                 Прогнозируемый трафик: {metro.new_traffic} <br />
-                {metro.is_effective ? "Трафик эффективен": "Трафик неэффективен"} <br />
+                {metro.is_effective ? "Трафик эффективен" : "Трафик неэффективен"} <br />
               </Popup>
             </Marker>
           ))}
 
-          {/* Отображение дорог */}
+          {/* render roads */}
           {visibleLayers.roads && zone.zoneRoadTraffic.map((road) => (
             <Polyline
               key={road.road.id}
@@ -104,7 +108,7 @@ const MapComponent = () => {
                 Утренний трафик: {road.road.morning_traffic} <br />
                 Вечерний трафик: {road.road.evening_traffic} <br />
                 Прогнозируемый трафик: {road.new_traffic} <br />
-                {road.is_effective ? "Трафик эффективен": "Трафик неэффективен"} <br />
+                {road.is_effective ? "Трафик эффективен" : "Трафик неэффективен"} <br />
               </Popup>
             </Polyline>
           ))}
@@ -114,5 +118,6 @@ const MapComponent = () => {
     </div>
   );
 };
+
 
 export default MapComponent;
