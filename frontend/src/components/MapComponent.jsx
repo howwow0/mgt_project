@@ -6,7 +6,7 @@ import { fetchConstructionZones } from "../api/constructionsApi";
 import CustomLeafletToggleControl from "./CustomLeafletToggleControl";
 import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
-
+import "../styles/MapComponent.css";
 const MapComponent = () => {
   const [constructionZones, setConstructionZones] = useState([]);
   const [visibleLayers, setVisibleLayers] = useState({
@@ -14,15 +14,25 @@ const MapComponent = () => {
     roads: true,
     construction: true,
   });
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await fetchConstructionZones();
-        setConstructionZones(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+    const loadData = async (attempts = 10, delay = 4000) => {
+      setLoading(true); // Start loading
+
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const data = await fetchConstructionZones();
+          setConstructionZones(data);
+          setLoading(false); 
+          return;
+        } catch (error) {
+          console.error("Attempt failed:", error);
+          // Wait for the specified delay before trying again
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
       }
+
+      setLoading(false); 
     };
 
     loadData();
@@ -35,8 +45,28 @@ const MapComponent = () => {
     }));
   };
 
-  if (constructionZones.length === 0) {
-    return <div>Загрузка...</div>;
+  if (loading) {
+    return(
+    <div className="as">
+      <div className="container">
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+      </div>
+    </div>);
   }
 
   return (
@@ -55,10 +85,18 @@ const MapComponent = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {constructionZones.map((zone) => (
-          <PolygonLayer key={zone.id} zone={zone} visibleLayers={visibleLayers} />
+          <PolygonLayer
+            key={zone.id}
+            zone={zone}
+            visibleLayers={visibleLayers}
+          />
         ))}
         {constructionZones.map((zone) => (
-          <MarkerLayer key={zone.id} zone={zone} visibleLayers={visibleLayers} />
+          <MarkerLayer
+            key={zone.id}
+            zone={zone}
+            visibleLayers={visibleLayers}
+          />
         ))}
       </MapContainer>
     </div>
