@@ -6,7 +6,11 @@ import 'leaflet/dist/leaflet.css';
 
 const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
   const map = useMap();
-
+  const labels = {
+    metro: "Метро",
+    roads: "Дороги",
+    construction: "Зоны застройки"
+  };
   useEffect(() => {
     const CustomControl = L.Control.extend({
       options: {
@@ -30,7 +34,8 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
 
           const label = L.DomUtil.create('label', '', container);
           label.htmlFor = layer;
-          label.innerHTML = ` ${layer.charAt(0).toUpperCase() + layer.slice(1)}<br/>`;
+
+          label.innerHTML = ` ${labels[layer]}<br/>`;
 
           L.DomEvent.on(checkbox, 'change', (e) => {
             handleLayerToggle(layer, e.target.checked);
