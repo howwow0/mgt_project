@@ -31,6 +31,7 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
 
         layers.forEach((layer) => {
           const checkbox = L.DomUtil.create('input', '', container);
+          checkbox.style = 'accent-color: rgb(85,69,150);'
           checkbox.type = 'checkbox';
           checkbox.checked = visibleLayers[layer];
           checkbox.id = layer;
