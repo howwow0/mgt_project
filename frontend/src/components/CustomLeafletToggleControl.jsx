@@ -58,7 +58,7 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
     };
   }, [map, visibleLayers, handleLayerToggle]);
 
-  return null; // This component does not render visible JSX
+  return null;
 };
 
 export default CustomLeafletToggleControl;
