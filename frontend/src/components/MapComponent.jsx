@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { fetchConstructionZones } from "../api/constructionsApi";
+import { fetchConstructionZones } from "../api/api";
 import CustomLeafletToggleControl from "./CustomLeafletToggleControl";
 import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
@@ -99,7 +99,9 @@ const MapComponent = () => {
             visibleLayers={visibleLayers}
           />
         ))}
+        
       </MapContainer>
+      
     </div>
   );
 };
