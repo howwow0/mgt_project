@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RoadForm from './RoadForm';
 import MetroForm from './MetroForm';
 import ZoneAreaForm from './ZoneAreaForm';
+import '../../styles/FormStyles.css';
 
 const MainForm = () => {
   const [roads, setRoads] = useState([]);
