@@ -57,141 +57,77 @@ export class ConstructionZoneService {
     }));
 
     newZones.forEach((zone) => {
-      /*const zoneAreaForLivingPeople = zone.constructionZoneArea.filter(
-        (pa) => pa.construction_type.floor_area != 35,
-      );
-
-      const livingPeoples = zoneAreaForLivingPeople.reduce((p, c) => {
-        return p + (c.zone_area / c.construction_type.floor_area) * 0.57;
-      }, 0); //Люди живущие в домах*/
-
+      // Количество рабочих проживающих на объекте
       const livingPeoples = TrafficUtils.countCitizen(
         zone.constructionZoneArea,
       );
-
-      /*const zoneAreaForNotLivingPeople = zones.flatMap((p) => {
-        return p.constructionZoneArea.filter(
-          (pa) => pa.construction_type.floor_area == 35,
-        );
-      });
-
-      const notLivingPeoples = zoneAreaForNotLivingPeople.reduce((p, c) => {
-        return p + c.zone_area / c.construction_type.floor_area;
-      }, 0);*/
-
-      console.log(livingPeoples);
-      //console.log(notLivingPeoples);
-
-      //const outWorkers = notLivingPeoples - livingPeoples * 0.2;
-
+      // Количество свободных рабочих мест
       const outWorkers = TrafficUtils.countWorkPlace(
         zone.constructionZoneArea,
         livingPeoples,
       );
-
-      console.log(outWorkers);
-
-      //const metroLoad = (livingPeoples * 0.8 * 0.7 + outWorkers * 0.7) / 1000;
+      // Нагрузка на метро, созданная из-за объекта
       const metroLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, true);
-
-      console.log(metroLoad);
-
-      //const roadLoad = (livingPeoples * 0.8 * 0.3 + outWorkers * 0.3) / 1.2;
+      // Нагрузка на дорогу, созданная из-за объекта
       const roadLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, false);
-
-      console.log(roadLoad);
-
-      /*const morningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
-        (c, p) => c + Number(p.metro_station.morning_traffic),
-        0,
-      );*/
-      console.log(zone.zoneMetroTraffic);
+      // Суммарная изначальная нагрузка на метро утром
       const morningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
         zone.zoneMetroTraffic,
         true,
       );
-
-      /*const eveningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
-        (c, p) => c + Number(p.metro_station.evening_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на метро вечером
       const eveningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
         zone.zoneMetroTraffic,
         false,
       );
-
-      /*const morningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
-        (c, p) => c + Number(p.road.morning_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на дорогу утром
       const morningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
         zone.zoneRoadTraffic,
         true,
       );
-
-      /*const eveningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
-        (c, p) => c + Number(p.road.evening_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на дорогу вечером
       const eveningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
         zone.zoneRoadTraffic,
         false,
       );
-
-      console.log(morningCountTrafficMetro);
-      console.log(eveningCountTrafficMetro);
-      console.log(morningCountTrafficRoad);
-      console.log(eveningCountTrafficRoad);
-
+      // Установка новой нагрузки для каждого метро
       zone.zoneMetroTraffic.forEach((metro) => {
-        /*metro.new_traffic_morning =
-          (metroLoad * metro.metro_station.morning_traffic) /
-            morningCountTrafficMetro +
-          Number(metro.metro_station.morning_traffic);*/
+        // Установка утреннего значения
         metro.new_traffic_morning = TrafficUtils.calcTraffic(
           metroLoad,
           metro.metro_station.morning_traffic,
           morningCountTrafficMetro,
         );
-
-        /*metro.new_traffic_evening =
-          (metroLoad * metro.metro_station.evening_traffic) /
-            eveningCountTrafficMetro +
-          Number(metro.metro_station.evening_traffic);*/
+        // Установка вечернего значения
         metro.new_traffic_evening = TrafficUtils.calcTraffic(
           metroLoad,
           metro.metro_station.evening_traffic,
           eveningCountTrafficMetro,
         );
-
+        // Проверка на дифицит утром
         metro.is_deficit_morning =
           metro.metro_station.capacity < metro.new_traffic_morning;
-
+        // Проверка на дифицит вечером
         metro.is_deficit_evening =
           metro.metro_station.capacity < metro.new_traffic_evening;
       });
-
+      // Установка новой нагрузки для каждой дороги
       zone.zoneRoadTraffic.forEach((road) => {
-        /*road.new_traffic_morning =
-          (roadLoad * road.road.morning_traffic) / morningCountTrafficRoad +
-          Number(road.road.morning_traffic);*/
+        // Установка утреннего значения
         road.new_traffic_morning = TrafficUtils.calcTraffic(
           roadLoad,
           road.road.morning_traffic,
           morningCountTrafficRoad,
         );
-
-        /*road.new_traffic_evening =
-          (roadLoad * road.road.evening_traffic) / eveningCountTrafficRoad +
-          Number(road.road.evening_traffic);*/
+        // Установка вечернего значения
         road.new_traffic_evening = TrafficUtils.calcTraffic(
           roadLoad,
           road.road.evening_traffic,
           eveningCountTrafficRoad,
         );
-
+        // Проверка на дифицит утром
         road.is_deficit_morning = road.road.capacity < road.new_traffic_morning;
-
+        // Проверка на дифицит вечером
         road.is_deficit_evening = road.road.capacity < road.new_traffic_evening;
       });
       return zone;

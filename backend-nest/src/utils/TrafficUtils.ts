@@ -1,12 +1,19 @@
 //src/utils/TrafficUtils.ts
 
 export class TrafficUtils {
+  // Коэффицент рабочего населения
   private static WORKING_SITIZEN = 0.57;
+  // Коэффицент для рабочей зоны
   private static WORKING_AREA = 35;
+  // Коэффицент поездок в центр
   private static TO_CENTER = 0.8;
+  // Коэффицент поездок на общественном транспорте
   private static PUBLIC_TRASPORT = 0.7;
+  // Тысяча (для перевода в т.)
   private static THOUSAND = 1000;
+  // Коэффиццент заполняемости автомобиля
   private static CAR_OCCAPACITY = 1.2;
+
   // Функция для расчета рабочего населения на объекте
   static countCitizen(zones: any[]): number {
     let res = 0;
@@ -32,6 +39,7 @@ export class TrafficUtils {
     return res - workers * (1 - TrafficUtils.TO_CENTER);
   }
 
+  // Функция для расчета нагрузки
   static calcLoad(
     workers: number,
     workPlaces: number,
@@ -45,6 +53,7 @@ export class TrafficUtils {
     );
   }
 
+  // Функция для получения суммы нагрузки на метро
   static sumTrafficMetro(zones: any[], isMorning: Boolean): number {
     let res = 0;
     zones.forEach((zone) => {
@@ -58,6 +67,7 @@ export class TrafficUtils {
     return res;
   }
 
+  // Функция для получения суммы нагрузки на дорогу
   static sumTrafficRoad(zones: any[], isMorning: Boolean): number {
     let res = 0;
     zones.forEach((zone) => {
@@ -70,6 +80,7 @@ export class TrafficUtils {
     return res;
   }
 
+  // Функция для расчета нагрузки для отдельного "узла"
   static calcTraffic(
     addTraffic: number,
     oldTraffic: number,
@@ -78,5 +89,4 @@ export class TrafficUtils {
     return (addTraffic * oldTraffic) / sumTraffic + Number(oldTraffic);
   }
 
-  //static isDeficite()
 }
