@@ -18,8 +18,8 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
       },
       onAdd: function () {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        container.innerHTML = '<p style = "text-align:center; margin-bottom: 0px; font-weight: bold; ">Слои</p>';
-        container.style.backgroundColor = 'rgb(240,240,240)';
+        container.innerHTML = '<p style = "text-align:center; margin-bottom: 0px; font-weight: bold; color: rgb(85,69,150);">Слои</p>';
+        container.style.backgroundColor = 'rgb(240,240,240, 0.8)';
         container.style.padding= '0px 20px 10px 20px';
         container.style.fontSize = '14px';
         container.style.boxShadow = '0 1px 5px rgba(0,0,0,0.4)';
@@ -58,7 +58,7 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
     };
   }, [map, visibleLayers, handleLayerToggle]);
 
-  return null; // This component does not render visible JSX
+  return null;
 };
 
 export default CustomLeafletToggleControl;
