@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import MapSelector from './MapSelector';
 
 const RoadForm = ({ roads, setRoads }) => {
   const [road, setRoad] = useState({
     name: '',
+    geometry: {
+      type: 'LineString',
+      coordinates: [],
+    },
     morning_traffic: 0,
     evening_traffic: 0,
     capacity: 0,
   });
 
   const [showMap, setShowMap] = useState(false);
-  const [positions, setPositions] = useState([null, null]); // Массив для хранения начальной и конечной точек
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,19 +20,20 @@ const RoadForm = ({ roads, setRoads }) => {
   };
 
   const addRoadSegment = () => {
-    if (positions[0] && positions[1]) {
-      setRoads((prev) => [
-        ...prev,
-        { ...road, start: positions[0], end: positions[1] },
-      ]);
+    const { coordinates } = road.geometry;
+    if (coordinates.length === 2) {
+      setRoads((prev) => [...prev, road]);
       // Сброс состояния формы
       setRoad({
         name: '',
+        geometry: {
+          type: 'LineString',
+          coordinates: [],
+        },
         morning_traffic: 0,
         evening_traffic: 0,
         capacity: 0,
       });
-      setPositions([null, null]);
       setShowMap(false); // Скрыть карту после добавления
     } else {
       alert('Пожалуйста, выберите обе точки на карте.');
@@ -40,57 +43,76 @@ const RoadForm = ({ roads, setRoads }) => {
   const toggleMap = () => {
     setShowMap((prev) => !prev);
     if (showMap) {
-      setPositions([null, null]); // Сбросить позиции, если карта скрыта
+      setRoad((prev) => ({
+        ...prev,
+        geometry: { type: 'LineString', coordinates: [] }, // Сбросить позиции, если карта скрыта
+      }));
     }
   };
 
   return (
     <div>
       <h3>Дорога</h3>
-      <input
-        type="text"
-        name="name"
-        value={road.name}
-        onChange={handleChange}
-        placeholder="Название дороги"
-      />
-      <input
-        type="number"
-        name="morning_traffic"
-        value={road.morning_traffic}
-        onChange={handleChange}
-        placeholder="Утренний трафик"
-      />
-      <input
-        type="number"
-        name="evening_traffic"
-        value={road.evening_traffic}
-        onChange={handleChange}
-        placeholder="Вечерний трафик"
-      />
-      <input
-        type="number"
-        name="capacity"
-        value={road.capacity}
-        onChange={handleChange}
-        placeholder="Вместимость"
-      />
+
+      <label>
+        Название дороги:
+        <input
+          type="text"
+          name="name"
+          value={road.name}
+          onChange={handleChange}
+          placeholder="Введите название дороги"
+        />
+      </label>
+
+      <label>
+        Утренний трафик:
+        <input
+          type="number"
+          name="morning_traffic"
+          value={road.morning_traffic}
+          onChange={handleChange}
+          placeholder="Утренний трафик"
+        />
+      </label>
+
+      <label>
+        Вечерний трафик:
+        <input
+          type="number"
+          name="evening_traffic"
+          value={road.evening_traffic}
+          onChange={handleChange}
+          placeholder="Вечерний трафик"
+        />
+      </label>
+
+      <label>
+        Вместимость:
+        <input
+          type="number"
+          name="capacity"
+          value={road.capacity}
+          onChange={handleChange}
+          placeholder="Вместимость"
+        />
+      </label>
 
       <button onClick={toggleMap}>
-        {showMap ? 'Скрыть карту' : 'Добавить дорогу'}
+        {showMap ? 'Скрыть карту' : 'Выбрать две точки дороги'}
       </button>
 
       {showMap && (
         <div style={{ overflow: 'auto', maxHeight: '400px', marginTop: '10px' }}>
           <h4>Выберите начальную и конечную точки на карте:</h4>
-          <MapSelector
-            onSelect={(selected) => setPositions(selected)} // Обновление позиций в состоянии
-            selectedPositions={positions}
-          />
+          {/* Логика выбора точек */}
         </div>
       )}
 
-      <button onClick={addRoadSegment} disabled={!positions[0] || !positions[1] || !road.name}>
+      <button
+        onClick={addRoadSegment}
+        disabled={road.geometry.coordinates.length !== 2 || !road.name}
+      >
         Добавить дорогу
       </button>
 
@@ -98,7 +120,7 @@ const RoadForm = ({ roads, setRoads }) => {
         {roads.length > 0 ? (
           roads.map((segment, index) => (
             <li key={index}>
-              Дорога: {segment.name}, Начало: {segment.start.lat}, {segment.start.lng} - Конец: {segment.end.lat}, {segment.end.lng}
+              Дорога: {segment.name}, Начало: {segment.geometry.coordinates[0][1]}, {segment.geometry.coordinates[0][0]} - Конец: {segment.geometry.coordinates[1][1]}, {segment.geometry.coordinates[1][0]}
             </li>
           ))
         ) : (
