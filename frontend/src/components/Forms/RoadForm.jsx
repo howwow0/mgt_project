@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/FormStyles.css';
 
 const RoadForm = ({ roads, setRoads }) => {
   const [road, setRoad] = useState({
@@ -52,9 +53,9 @@ const RoadForm = ({ roads, setRoads }) => {
 
   return (
     <div>
-      <h3>Дорога</h3>
+      <h1>Дорога</h1>
 
-      <label>
+      {/* <label>
         Название дороги:
         <input
           type="text"
@@ -100,6 +101,45 @@ const RoadForm = ({ roads, setRoads }) => {
 
       <button onClick={toggleMap}>
         {showMap ? 'Скрыть карту' : 'Выбрать две точки дороги'}
+      </button> */}
+
+      <div className='trafficForms'>
+        <label>Название дороги</label>
+            <input
+                type="text"
+                name="name"
+                value={road.name}
+                onChange={handleChange}
+                placeholder="Введите название дороги"
+                style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
+            />
+        <label>Утренний трафик</label>
+        <input
+          type="number"
+          name="morning_traffic"
+          value={road.morning_traffic}
+          onChange={handleChange}
+          placeholder="Утренний трафик"
+          style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
+        />
+        <label>Вечерний трафик</label>
+        <input
+            type="number"
+            name="evening_traffic"
+            value={road.evening_traffic}
+            onChange={handleChange}
+            placeholder="Вечерний трафик"
+          />
+        <label>Пропускная способность</label>
+        <input
+          type="number"
+          name="capacity"
+          value={road.capacity}
+          onChange={handleChange}
+          placeholder="Пропускная способность"
+        />
+          <button onClick={toggleMap}>
+        {showMap ? 'Скрыть карту' : 'Выбрать две точки дороги'}
       </button>
 
       {showMap && (
@@ -115,6 +155,7 @@ const RoadForm = ({ roads, setRoads }) => {
       >
         Добавить дорогу
       </button>
+      </div>
 
       <ul>
         {roads.length > 0 ? (

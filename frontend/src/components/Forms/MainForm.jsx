@@ -85,39 +85,39 @@ const MainForm = () => {
   return (
     <div>
       <h1>Форма</h1>
-      {/* Название зоны поле */}
       <div>
-        <label htmlFor="name">Название:</label>
+        <label htmlFor="name" style={{marginRight: '10px'}}>Название</label>
         <input
           id="name"
           type="text"
           value={formData.name}
           onChange={(e) => handleFormDataChange('name', e.target.value)}
+          style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)', boxShadow: '0 1px 5px rgba(0,0,0,0.4)'}}
         />
       </div>
 
-      <button onClick={toggleMap}>
+      <button onClick={toggleMap} style={{margin: '10px 10px 0px 0px'}}>
         {showMap ? 'Скрыть карту' : 'Выбрать область застройки'}
       </button>
 
       {showMap && (
         <div style={{ overflow: 'auto', maxHeight: '400px', marginTop: '10px' }}>
-          <h4>Выберите область на карте:</h4>
+          <p>Выберите область на карте</p>
          {/* Логика выбора области */}
         </div>
       )}
 
-      <div>
-        <button onClick={() => setActiveForm('road')}>Дорога</button>
-        <button onClick={() => setActiveForm('metro')}>Метро</button>
+      <div className='buttons'>
+        <button onClick={() => setActiveForm('road')} style={{margin: '10px 10px 10px 0px'}}>Дорога</button>
+        <button onClick={() => setActiveForm('metro')} style={{margin: '10px 10px 10px 0px'}}>Метро</button>
         <button onClick={() => setActiveForm('zone')}>Площадь</button>
       </div>
       {renderForm()}
       <div>
-        <h2>Статистика</h2>
-        <p>Дорог: {formData.roads.length}</p>
-        <p>Станций метро: {formData.metroStations.length}</p>
-        <p>Площадей: {formData.zoneAreas.length}</p>
+        <h1>Статистика</h1>
+        <p>Дорог  {formData.roads.length}</p>
+        <p>Станций метро {formData.metroStations.length}</p>
+        <p>Площадей {formData.zoneAreas.length}</p>
       </div>
 
       <button onClick={handleFormDataChange} disabled={formData.area.coordinates.length === 0 || !formData.name}>

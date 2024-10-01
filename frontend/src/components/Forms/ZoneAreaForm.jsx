@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/FormStyles.css';
 
 const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
   const [zoneArea, setZoneArea] = useState({
@@ -24,10 +25,10 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
 
   return (
     <div>
-      <h3>Площади</h3>
+      <h1>Площади</h1>
+      <div className='areaForms'>
 
-      {/* Label and Input for Zone Area */}
-      <label htmlFor="zone_area">Площадь:</label>
+      <label htmlFor="zone_area">Площадь</label>
       <input
         id="zone_area"
         type="number"
@@ -38,7 +39,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       />
 
       {/* Label and ComboBox for Construction Type */}
-      <label htmlFor="construction_type_id">Тип строительства:</label>
+      <label htmlFor="construction_type_id">Тип строительства</label>
       <select
         id="construction_type_id"
         name="construction_type_id"
@@ -57,6 +58,9 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       <button onClick={addZoneArea} disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0}>
         Добавить площадь
       </button>
+
+      </div>
+      
 
       <ul>
         {zoneAreas && zoneAreas.length > 0 ? (
