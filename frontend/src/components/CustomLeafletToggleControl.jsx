@@ -14,12 +14,15 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
       },
       onAdd: function () {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        container.style.backgroundColor = 'white';
-        container.style.padding = '20px';
+        container.innerHTML = '<p style = "text-align:center; margin-bottom: 0px; font-weight: bold; ">Слои</p>';
+        container.style.backgroundColor = 'rgb(240,240,240)';
+        container.style.padding= '0px 20px 10px 20px';
+        container.style.fontSize = '14px';
         container.style.boxShadow = '0 1px 5px rgba(0,0,0,0.4)';
         container.style.borderRadius = '20px';
         container.style.border = '1px solid rgba(85,69,150, 0.9)';
 
+        
         const layers = Object.keys(visibleLayers);
 
         layers.forEach((layer) => {

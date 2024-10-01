@@ -7,6 +7,7 @@ import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
 import "../styles/MapComponent.css";
 import ContactsButton from './ContactsButton';
+import '../styles/ZoneButton.css'
 
 import MainForm from './Forms/MainForm'; // Импортируйте ваш компонент формы
 const MapComponent = () => {
@@ -110,20 +111,7 @@ const MapComponent = () => {
       {!showToolbar && (
         <button
           onClick={toggleToolbar}
-          style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            zIndex: 1000,
-          }}
+          className="zone-button"
         >
           Добавить зону
         </button>

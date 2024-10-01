@@ -4,6 +4,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
 import metroIcon from "../resources/metro.svg"; // Adjust path as needed
 import roadIcon from "../resources/road.svg"; // Adjust path as needed
+import '../styles/Zones.css';
 
 const MarkerLayer = ({ zone, visibleLayers }) => (
   <>
@@ -16,7 +17,7 @@ const MarkerLayer = ({ zone, visibleLayers }) => (
         ]}
         icon={L.icon({ iconUrl: metroIcon, iconSize: [25, 25], iconAnchor: [12, 12] })}
       >
-        <Popup>
+        <Popup className="zones">
           <h3>{metro.metro_station.name}</h3>
           Утренний трафик: {metro.metro_station.morning_traffic} <br />
           Вечерний трафик: {metro.metro_station.evening_traffic} <br />
@@ -36,7 +37,7 @@ const MarkerLayer = ({ zone, visibleLayers }) => (
 
       return (
         <Marker key={road.road.id} position={centerPoint} icon={L.icon({ iconUrl: roadIcon, iconSize: [25, 25], iconAnchor: [12, 12] })}>
-          <Popup>
+          <Popup className="zones">
             <h3>{road.road.name}</h3>
             Утренний трафик: {road.road.morning_traffic} <br />
             Вечерний трафик: {road.road.evening_traffic} <br />
