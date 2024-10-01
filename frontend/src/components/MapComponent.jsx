@@ -40,11 +40,11 @@ const MapComponent = () => {
   }
 
   return (
-    <div className="map-with-controls">
+    <div className="map-with-controls" style ={{padding: '20px'}}>
       <MapContainer
         center={[55.746996, 37.676155]}
         zoom={13}
-        style={{ height: "100vh", width: "100%" }}
+        style={{ height: "100vh", width: "100%", borderRadius: "10px"}}
       >
         <CustomLeafletToggleControl
           visibleLayers={visibleLayers}

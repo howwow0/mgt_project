@@ -10,13 +10,15 @@ const CustomLeafletToggleControl = ({ visibleLayers, handleLayerToggle }) => {
   useEffect(() => {
     const CustomControl = L.Control.extend({
       options: {
-        position: 'bottomright',
+        position: 'topright',
       },
       onAdd: function () {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
         container.style.backgroundColor = 'white';
-        container.style.padding = '10px';
+        container.style.padding = '20px';
         container.style.boxShadow = '0 1px 5px rgba(0,0,0,0.4)';
+        container.style.borderRadius = '20px';
+        container.style.border = '1px solid rgba(85,69,150, 0.9)';
 
         const layers = Object.keys(visibleLayers);
 
