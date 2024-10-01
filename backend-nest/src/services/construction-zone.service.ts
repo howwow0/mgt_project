@@ -151,26 +151,37 @@ export class ConstructionZoneService {
       const savedZone = await queryRunner.manager.save(constructionZone);
 
       // Создаем и сохраняем объект ConstructionZoneArea
-      const constructionZoneArea = new ConstructionZoneArea();
-      constructionZoneArea.zone_area =
-        createConstructionZoneDto.zoneArea.zone_area;
-      constructionZoneArea.construction_type =
-        await queryRunner.manager.findOne(ConstructionType, {
-          where: {
-            id: createConstructionZoneDto.zoneArea.construction_type_id,
-          }, // Используем ID
-        });
+      for (const zoneAreaDto of createConstructionZoneDto.zoneArea) {
+        const constructionZoneArea = new ConstructionZoneArea();
+        constructionZoneArea.zone_area = zoneAreaDto.zone_area;
+        constructionZoneArea.construction_type =
+          await queryRunner.manager.findOne(ConstructionType, {
+            where: {
+              id: zoneAreaDto.construction_type_id,
+            }, // Используем ID
+          });
 
-      constructionZoneArea.zone = savedZone; // Связываем зону строительства
+        constructionZoneArea.zone = savedZone; // Связываем зону строительства
 
-      await queryRunner.manager.save(constructionZoneArea); // Сохраняем объект зоны
+        await queryRunner.manager.save(constructionZoneArea);
+      } // Сохраняем объект зоны
       // Create road and link it
-      const road = this.roadRepository.create(createConstructionZoneDto.road);
-      await queryRunner.manager.save(road);
-      const zoneRoadTraffic = new ZoneRoadTraffic();
-      zoneRoadTraffic.zone = savedZone; // Associate with construction zone
-      zoneRoadTraffic.road = road; // Associate with the road
-      await queryRunner.manager.save(zoneRoadTraffic); // Save the relation
+      for (const roadDto of createConstructionZoneDto.road) {
+        const road = new Road();
+        road.name = roadDto.name;
+        road.geometry = roadDto.geometry;
+        road.morning_traffic = roadDto.morning_traffic;
+        road.evening_traffic = roadDto.evening_traffic;
+        road.capacity = roadDto.capacity;
+
+        const savedRoad = await queryRunner.manager.save(road);
+
+        const zoneRoadTraffic = new ZoneRoadTraffic();
+        zoneRoadTraffic.zone = savedZone; // Associate with construction zone
+        zoneRoadTraffic.road = savedRoad; // Associate with metro station
+        await queryRunner.manager.save(zoneRoadTraffic); // Save the relation
+      }
+
       // Сохранение метро (если есть)
       if (createConstructionZoneDto.metroStations) {
         for (const metroDto of createConstructionZoneDto.metroStations) {

@@ -72,17 +72,25 @@ export class CreateConstructionZoneDto {
   @IsNotEmpty()
   area: Polygon;
 
-  @ApiProperty({ description: 'Обязательная дорога' }) // Добавьте описание поля
+  @ApiProperty({
+    required: true,
+    type: [RoadDto],
+    description: 'Обязательная дорога',
+  }) // Добавьте описание поля
   @IsNotEmpty()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => RoadDto)
-  road: RoadDto; // Одна обязательная дорога
+  road: RoadDto[]; // Одна обязательная дорога
 
-  @ApiProperty({ description: 'Тип площади зоны' }) // Добавьте описание поля
+  @ApiProperty({
+    required: true,
+    type: [ConstructionZoneAreaDto],
+    description: 'Тип площади зоны',
+  }) // Добавьте описание поля
   @IsNotEmpty()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => ConstructionZoneAreaDto)
-  zoneArea: ConstructionZoneAreaDto; // Один обязательный тип площади
+  zoneArea: ConstructionZoneAreaDto[]; // Один обязательный тип площади
 
   @ApiProperty({
     required: false,
