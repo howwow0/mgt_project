@@ -1,10 +1,7 @@
-
 import React, { useEffect } from "react";
 import L from 'leaflet';
 import { useMap } from "react-leaflet";
-import { useNavigate } from 'react-router-dom';
 import '../styles/contactsButton.css';
-
 
 const ContactsButton = () =>
 {
@@ -18,7 +15,7 @@ const ContactsButton = () =>
             button.innerHTML = '<button class="contactsButton">Контакты</button>';
             button.style.border = 'none';
             button.onclick = () => {
-                useNavigate('/contacts');
+               // useNavigate('/contacts');
             };
             return button;
         };
