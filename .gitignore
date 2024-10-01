@@ -8,3 +8,4 @@
 /.pnp
 .pnp.js
 backend-nest/src/configs/ormconfig.ts
+backend-nest/src/configs/ormconfig.ts

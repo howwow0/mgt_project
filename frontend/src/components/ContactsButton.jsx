@@ -1,9 +1,7 @@
-
 import React, { useEffect } from "react";
 import L from 'leaflet';
 import { useMap } from "react-leaflet";
 import '../styles/contactsButton.css';
-
 
 const ContactsButton = () =>
 {
