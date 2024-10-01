@@ -122,9 +122,11 @@ const MapComponent = () => {
           position: 'absolute',
           left: '20px',
           bottom: '80px',
-          backgroundColor: 'white',
+          backgroundColor: 'rgb(240, 240, 240, 0.8)',
+          borderRadius: '20px',
           padding: '20px',
-          boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
+          border: '1px solid rgba(85,69,150, 0.9)',
+          boxShadow: '0 1px 5px rgba(0,0,0,0.4)',
           zIndex: 1000,
         }}>
           <h3>Добавление зоны</h3>
