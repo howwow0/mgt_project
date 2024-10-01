@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   logging: true,
   synchronize: false,
   migrationsRun: false,
-  database: 'construction_db', //Ваша БД, ВАЖНО! Ее необходимо самому создать в PostgreSQL
+  database: 'postgres', //Ваша БД, ВАЖНО! Ее необходимо самому создать в PostgreSQL
   entities: ['**/*.entity.{ts,js}'],
   migrations: ['src/migrations/*.ts'],
 });

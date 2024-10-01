@@ -88,5 +88,4 @@ export class TrafficUtils {
   ): number {
     return (addTraffic * oldTraffic) / sumTraffic + Number(oldTraffic);
   }
-
 }
