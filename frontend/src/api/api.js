@@ -26,6 +26,8 @@ export const fetchConstructionZones = async () => {
     throw error; // Re-throw the error after logging it
   }
 };
+
+
 export const fetchConstructionTypes = async () => {
   const cacheKey = 'constructionTypes';
 
