@@ -1,54 +1,49 @@
-import axios from 'axios';
-import { cache } from '../utils/cache';
+import axios from "axios";
+import { cache } from "../utils/cache";
 
-const API_URL_CONSTRUCTION_ZONES = 'http://localhost:3000/construction-zones';
-const API_URL_CONSTRUCTION_TYPES = 'http://localhost:3000/construction-types';
+const API_URL_CONSTRUCTION_ZONES = "http://localhost:3000/construction-zones";
+const API_URL_CONSTRUCTION_TYPES = "http://localhost:3000/construction-types";
 export const fetchConstructionZones = async () => {
-  const cacheKey = 'constructionZones';
-
-  // Check if data is in cache
+  const cacheKey = "constructionZones";
   const cachedData = cache.get(cacheKey);
   if (cachedData) {
-    return cachedData; // Return cached data if available
+    return cachedData;
   }
-
   try {
-    // Make the API call
-    const response = await axios.get(API_URL_CONSTRUCTION_ZONES); // Corrected to axios.get
-    const data = response.data; // Accessing the data from the response
-
-    // Set the fetched data in cache
+    const response = await axios.get(API_URL_CONSTRUCTION_ZONES);
+    const data = response.data;
     cache.set(cacheKey, data);
-
     return data;
   } catch (error) {
     console.error("Error fetching construction zones:", error);
-    throw error; // Re-throw the error after logging it
+    throw error;
   }
 };
-
-
 export const fetchConstructionTypes = async () => {
-  const cacheKey = 'constructionTypes';
-
-  // Check if data is in cache
+  const cacheKey = "constructionTypes";
   const cachedData = cache.get(cacheKey);
   if (cachedData) {
-    return cachedData; // Return cached data if available
+    return cachedData;
   }
-
   try {
-    // Make the API call
-    const response = await axios.get(API_URL_CONSTRUCTION_TYPES); // Corrected to axios.get
-    const data = response.data; // Accessing the data from the response
-
-    // Set the fetched data in cache
+    const response = await axios.get(API_URL_CONSTRUCTION_TYPES);
+    const data = response.data;
     cache.set(cacheKey, data);
 
     return data;
   } catch (error) {
     console.error("Error fetching construction types:", error);
-    throw error; // Re-throw the error after logging it
+    throw error;
   }
 };
-// You can add other functions for working with construction zones if needed
+
+export const fetchPostConstructionZones = async (requestBody) => {
+  try {
+    const response = await axios.post(API_URL_CONSTRUCTION_ZONES, requestBody);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error("Error fetching construction zones:", error);
+    throw error;
+  }
+};

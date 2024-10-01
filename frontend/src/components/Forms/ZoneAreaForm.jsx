@@ -7,16 +7,28 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
     construction_type_id: 0,
   });
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setZoneArea((prev) => ({ ...prev, [name]: value }));
+    setErrorMessage(''); // Clear any previous error messages
   };
 
   const addZoneArea = () => {
-    if (zoneArea.zone_area > 0 && zoneArea.construction_type_id > 0) {
-      setZoneAreas((prev) => [...prev, zoneArea]);
-      setZoneArea({ zone_area: 0, construction_type_id: 0 });
+    if (zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0) {
+      setErrorMessage('Пожалуйста, заполните все поля корректно.');
+      return;
     }
+
+    if (zoneAreas.some(zone => zone.construction_type_id === zoneArea.construction_type_id)) {
+      setErrorMessage('Этот тип строительства уже выбран для другой площади.');
+      return;
+    }
+
+    setZoneAreas((prev) => [...prev, zoneArea]);
+    setZoneArea({ zone_area: 0, construction_type_id: 0 });
+    setErrorMessage(''); // Clear any previous error messages
   };
 
   const removeZoneArea = (index) => {
@@ -55,9 +67,14 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
         ))}
       </select>
       
-      <button onClick={addZoneArea} disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0}>
+      <button 
+        onClick={addZoneArea} 
+        disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0 || zoneAreas.some(zone => zone.construction_type_id === zoneArea.construction_type_id)}
+      >
         Добавить площадь
       </button>
+
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
       </div>
       
