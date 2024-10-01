@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './configs/ormconfig';
 import { ConstructionZoneModule } from './construction-zone.module';
+import { ConstructionTypeModule } from './construction-type.module';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -11,6 +12,7 @@ import { ConstructionZoneModule } from './construction-zone.module';
       },
     }),
     ConstructionZoneModule,
+    ConstructionTypeModule,
   ],
 })
 export class AppModule {}

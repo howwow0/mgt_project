@@ -1,14 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConstructionZone } from '../entities/construction_zones.entity';
-import { Repository } from 'typeorm';
-import { TrafficUtils } from '../utils/TrafficUtils'; // Импортируем утилитарный класс
+import { Repository, DataSource } from 'typeorm';
+import { TrafficUtils } from '../utils/TrafficUtils';
+import { MetroStation } from '../entities/metro_stations.entity';
+import { Road } from '../entities/roads.entity';
+import { ConstructionZoneArea } from '../entities/construction_zone_area.entity';
+import { CreateConstructionZoneDto } from '../dto/create-construction-zone.dto';
+import { ConstructionType } from '../entities/construction_types.entity';
+import { ZoneMetroTraffic } from '../entities/zone_metro_traffic.entity';
+import { ZoneRoadTraffic } from '../entities/zone_road_traffic.entity';
 
 @Injectable()
 export class ConstructionZoneService {
   constructor(
     @InjectRepository(ConstructionZone)
     private readonly constructionZoneRepository: Repository<ConstructionZone>,
+    @InjectRepository(MetroStation)
+    private readonly metroStationRepository: Repository<MetroStation>,
+    @InjectRepository(Road)
+    private readonly roadRepository: Repository<Road>,
+    @InjectRepository(ConstructionZoneArea)
+    private readonly zoneAreaRepository: Repository<ConstructionZoneArea>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(): Promise<any[]> {
@@ -43,145 +57,147 @@ export class ConstructionZoneService {
     }));
 
     newZones.forEach((zone) => {
-      /*const zoneAreaForLivingPeople = zone.constructionZoneArea.filter(
-        (pa) => pa.construction_type.floor_area != 35,
-      );
-
-      const livingPeoples = zoneAreaForLivingPeople.reduce((p, c) => {
-        return p + (c.zone_area / c.construction_type.floor_area) * 0.57;
-      }, 0); //Люди живущие в домах*/
-
+      // Количество рабочих проживающих на объекте
       const livingPeoples = TrafficUtils.countCitizen(
         zone.constructionZoneArea,
       );
-
-      /*const zoneAreaForNotLivingPeople = zones.flatMap((p) => {
-        return p.constructionZoneArea.filter(
-          (pa) => pa.construction_type.floor_area == 35,
-        );
-      });
-
-      const notLivingPeoples = zoneAreaForNotLivingPeople.reduce((p, c) => {
-        return p + c.zone_area / c.construction_type.floor_area;
-      }, 0);*/
-
-      console.log(livingPeoples);
-      //console.log(notLivingPeoples);
-
-      //const outWorkers = notLivingPeoples - livingPeoples * 0.2;
-
+      // Количество свободных рабочих мест
       const outWorkers = TrafficUtils.countWorkPlace(
         zone.constructionZoneArea,
         livingPeoples,
       );
-
-      console.log(outWorkers);
-
-      //const metroLoad = (livingPeoples * 0.8 * 0.7 + outWorkers * 0.7) / 1000;
+      // Нагрузка на метро, созданная из-за объекта
       const metroLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, true);
-
-      console.log(metroLoad);
-
-      //const roadLoad = (livingPeoples * 0.8 * 0.3 + outWorkers * 0.3) / 1.2;
+      // Нагрузка на дорогу, созданная из-за объекта
       const roadLoad = TrafficUtils.calcLoad(livingPeoples, outWorkers, false);
-
-      console.log(roadLoad);
-
-      /*const morningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
-        (c, p) => c + Number(p.metro_station.morning_traffic),
-        0,
-      );*/
-      console.log(zone.zoneMetroTraffic);
+      // Суммарная изначальная нагрузка на метро утром
       const morningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
         zone.zoneMetroTraffic,
         true,
       );
-
-      /*const eveningCountTrafficMetro = zone.zoneMetroTraffic.reduce(
-        (c, p) => c + Number(p.metro_station.evening_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на метро вечером
       const eveningCountTrafficMetro = TrafficUtils.sumTrafficMetro(
         zone.zoneMetroTraffic,
         false,
       );
-
-      /*const morningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
-        (c, p) => c + Number(p.road.morning_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на дорогу утром
       const morningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
         zone.zoneRoadTraffic,
         true,
       );
-
-      /*const eveningCountTrafficRoad = zone.zoneRoadTraffic.reduce(
-        (c, p) => c + Number(p.road.evening_traffic),
-        0,
-      );*/
+      // Суммарная изначальная нагрузка на дорогу вечером
       const eveningCountTrafficRoad = TrafficUtils.sumTrafficRoad(
         zone.zoneRoadTraffic,
         false,
       );
-
-      console.log(morningCountTrafficMetro);
-      console.log(eveningCountTrafficMetro);
-      console.log(morningCountTrafficRoad);
-      console.log(eveningCountTrafficRoad);
-
+      // Установка новой нагрузки для каждого метро
       zone.zoneMetroTraffic.forEach((metro) => {
-        /*metro.new_traffic_morning =
-          (metroLoad * metro.metro_station.morning_traffic) /
-            morningCountTrafficMetro +
-          Number(metro.metro_station.morning_traffic);*/
+        // Установка утреннего значения
         metro.new_traffic_morning = TrafficUtils.calcTraffic(
           metroLoad,
           metro.metro_station.morning_traffic,
           morningCountTrafficMetro,
         );
-
-        /*metro.new_traffic_evening =
-          (metroLoad * metro.metro_station.evening_traffic) /
-            eveningCountTrafficMetro +
-          Number(metro.metro_station.evening_traffic);*/
+        // Установка вечернего значения
         metro.new_traffic_evening = TrafficUtils.calcTraffic(
           metroLoad,
           metro.metro_station.evening_traffic,
           eveningCountTrafficMetro,
         );
-
+        // Проверка на дифицит утром
         metro.is_deficit_morning =
           metro.metro_station.capacity < metro.new_traffic_morning;
-
+        // Проверка на дифицит вечером
         metro.is_deficit_evening =
           metro.metro_station.capacity < metro.new_traffic_evening;
       });
-
+      // Установка новой нагрузки для каждой дороги
       zone.zoneRoadTraffic.forEach((road) => {
-        /*road.new_traffic_morning =
-          (roadLoad * road.road.morning_traffic) / morningCountTrafficRoad +
-          Number(road.road.morning_traffic);*/
+        // Установка утреннего значения
         road.new_traffic_morning = TrafficUtils.calcTraffic(
           roadLoad,
           road.road.morning_traffic,
           morningCountTrafficRoad,
         );
-
-        /*road.new_traffic_evening =
-          (roadLoad * road.road.evening_traffic) / eveningCountTrafficRoad +
-          Number(road.road.evening_traffic);*/
+        // Установка вечернего значения
         road.new_traffic_evening = TrafficUtils.calcTraffic(
           roadLoad,
           road.road.evening_traffic,
           eveningCountTrafficRoad,
         );
-
+        // Проверка на дифицит утром
         road.is_deficit_morning = road.road.capacity < road.new_traffic_morning;
-
+        // Проверка на дифицит вечером
         road.is_deficit_evening = road.road.capacity < road.new_traffic_evening;
       });
       return zone;
     });
     return newZones;
+  }
+
+  async create(
+    createConstructionZoneDto: CreateConstructionZoneDto,
+  ): Promise<ConstructionZone> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const constructionZone = new ConstructionZone();
+      constructionZone.name = createConstructionZoneDto.name;
+      constructionZone.area = createConstructionZoneDto.area;
+
+      // Сохраняем зону строительства
+      const savedZone = await queryRunner.manager.save(constructionZone);
+
+      // Создаем и сохраняем объект ConstructionZoneArea
+      const constructionZoneArea = new ConstructionZoneArea();
+      constructionZoneArea.zone_area =
+        createConstructionZoneDto.zoneArea.zone_area;
+      constructionZoneArea.construction_type =
+        await queryRunner.manager.findOne(ConstructionType, {
+          where: {
+            id: createConstructionZoneDto.zoneArea.construction_type_id,
+          }, // Используем ID
+        });
+
+      constructionZoneArea.zone = savedZone; // Связываем зону строительства
+
+      await queryRunner.manager.save(constructionZoneArea); // Сохраняем объект зоны
+      // Create road and link it
+      const road = this.roadRepository.create(createConstructionZoneDto.road);
+      await queryRunner.manager.save(road);
+      const zoneRoadTraffic = new ZoneRoadTraffic();
+      zoneRoadTraffic.zone = savedZone; // Associate with construction zone
+      zoneRoadTraffic.road = road; // Associate with the road
+      await queryRunner.manager.save(zoneRoadTraffic); // Save the relation
+      // Сохранение метро (если есть)
+      if (createConstructionZoneDto.metroStations) {
+        for (const metroDto of createConstructionZoneDto.metroStations) {
+          const metroStation = new MetroStation();
+          metroStation.name = metroDto.name;
+          metroStation.position = metroDto.position;
+          metroStation.morning_traffic = metroDto.morning_traffic;
+          metroStation.evening_traffic = metroDto.evening_traffic;
+          metroStation.capacity = metroDto.capacity;
+
+          const savedMetroStation =
+            await queryRunner.manager.save(metroStation);
+
+          const zoneMetroTraffic = new ZoneMetroTraffic();
+          zoneMetroTraffic.zone = savedZone; // Associate with construction zone
+          zoneMetroTraffic.metro_station = savedMetroStation; // Associate with metro station
+          await queryRunner.manager.save(zoneMetroTraffic); // Save the relation
+        }
+      }
+
+      await queryRunner.commitTransaction();
+      return savedZone;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error; // Обработка ошибок
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

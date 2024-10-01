@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ConstructionZoneService } from '../services/construction-zone.service';
 import { ConstructionZone } from '../entities/construction_zones.entity';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateConstructionZoneDto } from '../dto/create-construction-zone.dto';
 
 @ApiTags('construction-zones')
 @Controller('construction-zones')
@@ -17,5 +18,21 @@ export class ConstructionZoneController {
   })
   async findAll(): Promise<ConstructionZone[]> {
     return this.constructionZoneService.findAll();
+  }
+
+  @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'Create a new construction zone with metro and roads',
+    type: ConstructionZone,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input data',
+  })
+  async createZone(
+    @Body() createConstructionZoneDto: CreateConstructionZoneDto,
+  ): Promise<ConstructionZone> {
+    return this.constructionZoneService.create(createConstructionZoneDto);
   }
 }
