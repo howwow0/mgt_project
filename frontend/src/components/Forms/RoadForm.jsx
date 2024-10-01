@@ -7,22 +7,63 @@ const RoadForm = ({ roads, setRoads }) => {
       type: 'LineString',
       coordinates: [],
     },
-    morning_traffic: 0,
-    evening_traffic: 0,
-    capacity: 0,
+    morning_traffic: "0",
+    evening_traffic: "0",
+    capacity: "0",
   });
 
   const [showMap, setShowMap] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRoad((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Валидация названия дороги
+    if (!road.name.trim()) {
+      newErrors.name = 'Название дороги не может быть пустым';
+      isValid = false;
+    }
+
+    // Валидация координат
+    if (road.geometry.coordinates.length !== 2) {
+      newErrors.coordinates = 'Не выбраны обе точки на карте';
+      isValid = false;
+    }
+
+    // Валидация утреннего трафика
+    if (road.morning_traffic <= 0) {
+      newErrors.morning_traffic = 'Утренний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вечернего трафика
+    if (road.evening_traffic <= 0) {
+      newErrors.evening_traffic = 'Вечерний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вместимости
+    if (road.capacity <= 0) {
+      newErrors.capacity = 'Вместимость должна быть положительным числом';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+  const removeRoad = (index) => {
+    setRoads((prev) => prev.filter((_, i) => i !== index));
+  };
   const addRoadSegment = () => {
-    const { coordinates } = road.geometry;
-    if (coordinates.length === 2) {
-      setRoads((prev) => [...prev, road]);
+    if (validateForm()) {
+      setRoads([...roads, road]);
       // Сброс состояния формы
       setRoad({
         name: '',
@@ -36,7 +77,7 @@ const RoadForm = ({ roads, setRoads }) => {
       });
       setShowMap(false); // Скрыть карту после добавления
     } else {
-      alert('Пожалуйста, выберите обе точки на карте.');
+      alert('Форма заполнена неверно.');
     }
   };
 
@@ -46,6 +87,11 @@ const RoadForm = ({ roads, setRoads }) => {
       setRoad((prev) => ({
         ...prev,
         geometry: { type: 'LineString', coordinates: [] }, // Сбросить позиции, если карта скрыта
+      }));
+    } else{
+      setRoad((prev) => ({
+        ...prev,
+        geometry: { type: 'LineString', coordinates: [[37.623500, 55.757500], [37.624500, 55.757500]] }, //Липовые координаты
       }));
     }
   };
@@ -63,6 +109,7 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Введите название дороги"
         />
+        {errors.name && <span className="error">{errors.name}</span>}
       </label>
 
       <label>
@@ -74,6 +121,7 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Утренний трафик"
         />
+        {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
       </label>
 
       <label>
@@ -85,6 +133,7 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Вечерний трафик"
         />
+        {errors.evening_traffic && <span className="error">{errors.evening_traffic}</span>}
       </label>
 
       <label>
@@ -96,6 +145,7 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Вместимость"
         />
+        {errors.capacity && <span className="error">{errors.capacity}</span>}
       </label>
 
       <button onClick={toggleMap}>
@@ -109,6 +159,8 @@ const RoadForm = ({ roads, setRoads }) => {
         </div>
       )}
 
+      {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+
       <button
         onClick={addRoadSegment}
         disabled={road.geometry.coordinates.length !== 2 || !road.name}
@@ -117,10 +169,11 @@ const RoadForm = ({ roads, setRoads }) => {
       </button>
 
       <ul>
-        {roads.length > 0 ? (
+        {Array.isArray(roads) && roads.length > 0 ? (
           roads.map((segment, index) => (
             <li key={index}>
               Дорога: {segment.name}, Начало: {segment.geometry.coordinates[0][1]}, {segment.geometry.coordinates[0][0]} - Конец: {segment.geometry.coordinates[1][1]}, {segment.geometry.coordinates[1][0]}
+              <button onClick={() => removeRoad(index)}>Удалить</button>
             </li>
           ))
         ) : (
