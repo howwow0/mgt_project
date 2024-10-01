@@ -1,10 +1,8 @@
-
 import React, { useEffect } from "react";
 import L from 'leaflet';
 import { useMap } from "react-leaflet";
 import { useNavigate } from 'react-router-dom';
 import '../styles/contactsButton.css';
-
 
 const ContactsButton = () =>
 {
