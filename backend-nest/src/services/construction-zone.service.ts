@@ -10,7 +10,7 @@ import { CreateConstructionZoneDto } from '../dto/create-construction-zone.dto';
 import { ConstructionType } from '../entities/construction_types.entity';
 import { ZoneMetroTraffic } from '../entities/zone_metro_traffic.entity';
 import { ZoneRoadTraffic } from '../entities/zone_road_traffic.entity';
-
+import { Logger } from '@nestjs/common'; // Импортируем Logger
 @Injectable()
 export class ConstructionZoneService {
   constructor(
@@ -142,6 +142,8 @@ export class ConstructionZoneService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    const logger = new Logger('ConstructionZoneService'); // Логгер для ошибок
+
     try {
       const constructionZone = new ConstructionZone();
       constructionZone.name = createConstructionZoneDto.name;
@@ -150,63 +152,78 @@ export class ConstructionZoneService {
       // Сохраняем зону строительства
       const savedZone = await queryRunner.manager.save(constructionZone);
 
-      // Создаем и сохраняем объект ConstructionZoneArea
-      for (const zoneAreaDto of createConstructionZoneDto.zoneArea) {
-        const constructionZoneArea = new ConstructionZoneArea();
-        constructionZoneArea.zone_area = zoneAreaDto.zone_area;
-        constructionZoneArea.construction_type =
-          await queryRunner.manager.findOne(ConstructionType, {
-            where: {
-              id: zoneAreaDto.construction_type_id,
-            }, // Используем ID
-          });
+      // Создаем и сохраняем объекты ConstructionZoneArea
+      await Promise.all(
+        createConstructionZoneDto.zoneArea.map(async (zoneAreaDto) => {
+          const constructionType = await queryRunner.manager.findOne(
+            ConstructionType,
+            {
+              where: { id: zoneAreaDto.construction_type_id },
+            },
+          );
 
-        constructionZoneArea.zone = savedZone; // Связываем зону строительства
+          if (!constructionType) {
+            throw new Error(
+              `Construction type with id ${zoneAreaDto.construction_type_id} not found`,
+            );
+          }
 
-        await queryRunner.manager.save(constructionZoneArea);
-      } // Сохраняем объект зоны
-      // Create road and link it
-      for (const roadDto of createConstructionZoneDto.road) {
-        const road = new Road();
-        road.name = roadDto.name;
-        road.geometry = roadDto.geometry;
-        road.morning_traffic = roadDto.morning_traffic;
-        road.evening_traffic = roadDto.evening_traffic;
-        road.capacity = roadDto.capacity;
+          const constructionZoneArea = new ConstructionZoneArea();
+          constructionZoneArea.zone_area = zoneAreaDto.zone_area;
+          constructionZoneArea.construction_type = constructionType;
+          constructionZoneArea.zone = savedZone; // Связываем с зоной строительства
 
-        const savedRoad = await queryRunner.manager.save(road);
+          await queryRunner.manager.save(constructionZoneArea);
+        }),
+      );
 
-        const zoneRoadTraffic = new ZoneRoadTraffic();
-        zoneRoadTraffic.zone = savedZone; // Associate with construction zone
-        zoneRoadTraffic.road = savedRoad; // Associate with metro station
-        await queryRunner.manager.save(zoneRoadTraffic); // Save the relation
-      }
+      // Сохраняем дороги и их связи
+      await Promise.all(
+        createConstructionZoneDto.road.map(async (roadDto) => {
+          const road = new Road();
+          road.name = roadDto.name;
+          road.geometry = roadDto.geometry;
+          road.morning_traffic = roadDto.morning_traffic;
+          road.evening_traffic = roadDto.evening_traffic;
+          road.capacity = roadDto.capacity;
 
-      // Сохранение метро (если есть)
+          const savedRoad = await queryRunner.manager.save(road);
+
+          const zoneRoadTraffic = new ZoneRoadTraffic();
+          zoneRoadTraffic.zone = savedZone; // Связываем с зоной строительства
+          zoneRoadTraffic.road = savedRoad; // Связываем с дорогой
+          await queryRunner.manager.save(zoneRoadTraffic);
+        }),
+      );
+
+      // Сохраняем станции метро (если они есть)
       if (createConstructionZoneDto.metroStations) {
-        for (const metroDto of createConstructionZoneDto.metroStations) {
-          const metroStation = new MetroStation();
-          metroStation.name = metroDto.name;
-          metroStation.position = metroDto.position;
-          metroStation.morning_traffic = metroDto.morning_traffic;
-          metroStation.evening_traffic = metroDto.evening_traffic;
-          metroStation.capacity = metroDto.capacity;
+        await Promise.all(
+          createConstructionZoneDto.metroStations.map(async (metroDto) => {
+            const metroStation = new MetroStation();
+            metroStation.name = metroDto.name;
+            metroStation.position = metroDto.position;
+            metroStation.morning_traffic = metroDto.morning_traffic;
+            metroStation.evening_traffic = metroDto.evening_traffic;
+            metroStation.capacity = metroDto.capacity;
 
-          const savedMetroStation =
-            await queryRunner.manager.save(metroStation);
+            const savedMetroStation =
+              await queryRunner.manager.save(metroStation);
 
-          const zoneMetroTraffic = new ZoneMetroTraffic();
-          zoneMetroTraffic.zone = savedZone; // Associate with construction zone
-          zoneMetroTraffic.metro_station = savedMetroStation; // Associate with metro station
-          await queryRunner.manager.save(zoneMetroTraffic); // Save the relation
-        }
+            const zoneMetroTraffic = new ZoneMetroTraffic();
+            zoneMetroTraffic.zone = savedZone; // Связываем с зоной строительства
+            zoneMetroTraffic.metro_station = savedMetroStation; // Связываем с метро
+            await queryRunner.manager.save(zoneMetroTraffic);
+          }),
+        );
       }
 
       await queryRunner.commitTransaction();
       return savedZone;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw error; // Обработка ошибок
+      logger.error('Error occurred during transaction:', error.message); // Логируем ошибку
+      throw new Error(`Transaction failed: ${error.message}`); // Пробрасываем ошибку с сообщением
     } finally {
       await queryRunner.release();
     }
