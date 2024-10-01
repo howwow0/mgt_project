@@ -14,7 +14,7 @@ export const fetchConstructionZones = async () => {
 
   try {
     // Make the API call
-    const response = await axios.get(API_URL); // Corrected to axios.get
+    const response = await axios.get(API_URL_CONSTRUCTION_ZONES); // Corrected to axios.get
     const data = response.data; // Accessing the data from the response
 
     // Set the fetched data in cache
@@ -37,7 +37,7 @@ export const fetchConstructionTypes = async () => {
 
   try {
     // Make the API call
-    const response = await axios.get(API_URL); // Corrected to axios.get
+    const response = await axios.get(API_URL_CONSTRUCTION_TYPES); // Corrected to axios.get
     const data = response.data; // Accessing the data from the response
 
     // Set the fetched data in cache
