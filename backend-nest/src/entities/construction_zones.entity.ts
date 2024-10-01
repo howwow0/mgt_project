@@ -1,17 +1,10 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Unique,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Polygon } from 'geojson';
 import { ZoneMetroTraffic } from './zone_metro_traffic.entity';
 import { ZoneRoadTraffic } from './zone_road_traffic.entity';
 import { ConstructionZoneArea } from './construction_zone_area.entity';
 
 @Entity('construction_zones')
-@Unique(['name'])
 export class ConstructionZone {
   @PrimaryGeneratedColumn()
   id: number;
