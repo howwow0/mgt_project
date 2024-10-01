@@ -1,8 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { LineString } from 'geojson';
 
 @Entity('roads')
-@Unique(['name'])
 export class Road {
   @PrimaryGeneratedColumn()
   id: number;

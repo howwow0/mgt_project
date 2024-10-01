@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 -- Создание таблицы для станций метро
 CREATE TABLE metro_stations (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,                     -- Название станции должно быть уникальным
+    name VARCHAR(100) NOT NULL ,                     -- Название станции 
     position GEOGRAPHY(Point, 4326) NOT NULL,              -- Географическое положение станции (широта, долгота)
     morning_traffic DECIMAL(10, 2) NOT NULL,               -- Пассажиропоток утром, тыс. чел./час
     evening_traffic DECIMAL(10, 2) NOT NULL,               -- Пассажиропоток вечером, тыс. чел./час
@@ -20,7 +20,7 @@ CREATE TABLE metro_stations (
 -- Создание таблицы для дорог
 CREATE TABLE roads (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,                      -- Название дороги должно быть уникальным
+    name VARCHAR(100) NOT NULL ,                      -- Название дороги
     geometry GEOGRAPHY(LINESTRING, 4326) NOT NULL,         -- Геометрия дороги (линия, а не точка)
     morning_traffic DECIMAL(10, 2) NOT NULL,               -- Пассажиропоток утром, машин/час
     evening_traffic DECIMAL(10, 2) NOT NULL,               -- Пассажиропоток вечером, машин/час
@@ -30,14 +30,14 @@ CREATE TABLE roads (
 -- Создание таблицы типов строительства
 CREATE TABLE construction_types (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,                      -- Название типа должно быть уникальным
+    name VARCHAR(100) NOT NULL ,                      -- Название типа 
     floor_area DECIMAL(10, 2) NOT NULL                              -- Поэтажная площадь (м²)
 );
 
 -- Создание таблицы для строительных зон
 CREATE TABLE construction_zones (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,                      -- Название проекта должно быть уникальным
+    name VARCHAR(100) NOT NULL ,                      -- Название pjys
     area GEOGRAPHY(POLYGON, 4326) NOT NULL                  -- Географическое положение строительной зоны (полигон)
 );
 

@@ -43,7 +43,7 @@ export class TrafficUtils {
   static calcLoad(
     workers: number,
     workPlaces: number,
-    isMetro: Boolean,
+    isMetro: boolean,
   ): number {
     return (
       (workers * TrafficUtils.TO_CENTER + workPlaces) *
@@ -54,10 +54,9 @@ export class TrafficUtils {
   }
 
   // Функция для получения суммы нагрузки на метро
-  static sumTrafficMetro(zones: any[], isMorning: Boolean): number {
+  static sumTrafficMetro(zones: any[], isMorning: boolean): number {
     let res = 0;
     zones.forEach((zone) => {
-      console.log(zone.metro_station);
       if (isMorning) {
         res += Number(zone.metro_station.morning_traffic);
       } else {
@@ -68,7 +67,7 @@ export class TrafficUtils {
   }
 
   // Функция для получения суммы нагрузки на дорогу
-  static sumTrafficRoad(zones: any[], isMorning: Boolean): number {
+  static sumTrafficRoad(zones: any[], isMorning: boolean): number {
     let res = 0;
     zones.forEach((zone) => {
       if (isMorning) {

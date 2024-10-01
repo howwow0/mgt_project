@@ -69,7 +69,7 @@ npm install
 
 ```bash
 cd backend-nest
-ts-node ./node_modules/typeorm/cli.js migration:run -d src/configs/ormconfig.ts
+npm run migrate:up
 ```
 
 ### 5. Запуск проекта
