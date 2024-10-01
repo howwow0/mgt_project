@@ -1,20 +1,16 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import MapComponent from './components/MapComponent';
 import './styles/App.css';
+// import './pages/Contacts';
 const App = () => {
   return (
-    <div className="App">
-      <header>
-        <a href='#'>Карта траффика</a>
-        <a href='#'>Контакты</a>
-      </header>
-      <MapComponent/>
-      <footer>
-        <p>Проект для хакатона &laquo;Студент года&raquo;</p>
-        <p>Тема: &laquo;Прогноз нагрузки на дороги и метро&raquo;</p>
-        <p>&copy; HackStreet Boys</p>
-      </footer>
-    </div>
+      <div className="App">
+            <MapComponent />
+            {/* <Routes>
+              <Route path="/contacts" element={<Contacts />} />
+            </Routes> */}
+      </div>
   );
 };
 

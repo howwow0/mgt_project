@@ -1,0 +1,11 @@
+.contactsButton{
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(85,69,150, 0.9);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+.contactsButton:hover{
+    background-color: rgba(85,69,150, 0.9);
+}

@@ -1,4 +1,3 @@
-// MapComponent.jsx
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -7,6 +6,7 @@ import CustomLeafletToggleControl from "./CustomLeafletToggleControl";
 import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
 import "../styles/MapComponent.css";
+import ContactsButton from './ContactsButton';
 const MapComponent = () => {
   const [constructionZones, setConstructionZones] = useState([]);
   const [visibleLayers, setVisibleLayers] = useState({
@@ -70,7 +70,7 @@ const MapComponent = () => {
   }
 
   return (
-    <div className="map-with-controls" style ={{padding: '20px'}}>
+    <div className="map-with-controls" style ={{}}>
       <MapContainer
         center={[55.746996, 37.676155]}
         zoom={13}
@@ -80,6 +80,7 @@ const MapComponent = () => {
           visibleLayers={visibleLayers}
           handleLayerToggle={handleLayerToggle}
         />
+        <ContactsButton/>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
