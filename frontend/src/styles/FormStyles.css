@@ -1,0 +1,94 @@
+.forms{
+    position: absolute;
+    left: 60px;
+    bottom: 20px;
+    background-color: rgb(240, 240, 240, 0.8);
+    border-radius: 2px;
+    padding: 20px;
+    border: 1px solid rgba(85,69,150, 0.9);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    z-index: 1000;
+    height: 75vh;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+}
+
+.forms h1{
+    color: rgba(85,69,150);
+}
+
+.forms button{
+    padding: 10px 20px 10px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(85,69,150, 0.9);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    cursor: pointer;
+    color: white;
+    background-color: rgba(85,69,150, 0.9);
+}
+
+.forms button:hover{
+    background-color: rgba(85,69,150);
+}
+
+.trafficForms
+{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-template-rows: repeat(auto-fill, auto);
+    gap: 10px;
+}
+
+.trafficForms input, .areaForms input, .areaForms select, .coordinates input
+{
+    border: 1px solid rgba(85,69,150, 0.9);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    border-radius: 2px;
+}
+
+.areaForms
+{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 10px;
+}
+
+.disabledButton:disabled
+{
+    background-color: rgba(85,69,150, 0.5);
+    border: 1px solid rgba(85,69,150, 0.5);
+}
+.disabledButton:disabled:hover
+{
+    background-color: rgba(85,69,150, 0.5);
+}
+.errors
+{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    color:red;
+}
+
+.buttonForm
+{
+    display: flex;
+    column-gap: 8px;
+    margin-top: 8px;
+}
+
+.coordinates
+{
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(4, auto);
+    column-gap: 8px;
+    row-gap: 4px;
+}
+
+.coordinates button
+{
+    padding: 4px 8px 4px 8px;
+}

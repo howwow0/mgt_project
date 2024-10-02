@@ -1,0 +1,29 @@
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+.App {
+    height: 100vh;
+}
+header{
+  display: flex;
+  justify-content: center;
+  background-color: rgb(85,69,150, 0.9);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header a{
+  padding: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+  font-size: 18px;
+}
+
+header a:hover{
+  color: gold;
+}
+
+

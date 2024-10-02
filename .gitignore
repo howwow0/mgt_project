@@ -1,0 +1,11 @@
+#vs code не подтсягивает игнор с других директорий
+.DS_Store
+.history
+
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+backend-nest/src/configs/ormconfig.ts
+backend-nest/src/configs/ormconfig.ts
