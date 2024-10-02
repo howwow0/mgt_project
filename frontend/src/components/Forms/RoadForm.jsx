@@ -26,7 +26,7 @@ const RoadForm = ({ roads, setRoads }) => {
     if (!newCoordinates[index]) {
       newCoordinates[index] = []; // Initialize if undefined
     }
-    newCoordinates[index][name === 'lat' ? 1 : 0] = parseFloat(value); // Set lat/lng correctly
+    newCoordinates[index][name === 'lat' ? 0 : 1] = value; // Set lat/lng correctly
     setRoad((prev) => ({
       ...prev,
       geometry: { ...prev.geometry, coordinates: newCoordinates },
@@ -190,14 +190,14 @@ const RoadForm = ({ roads, setRoads }) => {
               type="number"
               name="lng"
               placeholder="Долгота"
-              value={coord[0]}
+              value={coord[1]}
               onChange={(e) => handleCoordChange(index, e)}
             />
             <input
               type="number"
               name="lat"
               placeholder="Широта"
-              value={coord[1]}
+              value={coord[0]}
               onChange={(e) => handleCoordChange(index, e)}
             />
             <button onClick={() => removeCoordinate(index)}>Удалить</button>

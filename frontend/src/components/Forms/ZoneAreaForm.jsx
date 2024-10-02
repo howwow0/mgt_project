@@ -91,7 +91,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
         {Array.isArray(zoneAreas) && zoneAreas.length > 0 ? (
           zoneAreas.map((zone, index) => (
             <li key={index}>
-              Площадь: {zone.zone_area}, Тип строительства: {constructionTypes.find(type => type.id === zone.construction_type_id)?.name}
+              Площадь: {zone.zone_area}, Тип строительства: {constructionTypes.find(type => type.id == zone.construction_type_id)?.name}
               <button onClick={() => removeZoneArea(index)}>Удалить</button>
             </li>
           ))

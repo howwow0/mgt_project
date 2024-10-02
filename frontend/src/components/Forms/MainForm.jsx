@@ -58,9 +58,9 @@ const MainForm = ({ onClose }) => {
     }
 
     // Area validation
-    if (formData.area.coordinates.length === 0) {
+    if (formData.area.coordinates[0].length != 4) {
       formIsValid = false;
-      formErrors.area = "Не введены координаты области";
+      formErrors.area = "Не введены координаты области (4 точки)";
     }
 
     // Roads validation
@@ -141,7 +141,7 @@ const MainForm = ({ onClose }) => {
     };
       const response = await fetchPostConstructionZones(formData);
       if (response.id) {
-        alert("Зона ", response.name, " добавлена.");
+        alert("Зона " + response.name +" добавлена.");
         setFormData({
           name: "",
           area: { type: "Polygon", coordinates: [[]] },
@@ -246,13 +246,13 @@ const MainForm = ({ onClose }) => {
       </div>
 
       <div>
-        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates[0].length === 0}>
+        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates[0].length != 4}>
           Дорога
         </button>
-        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates[0].length === 0}>
+        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates[0].length != 4}>
           Метро
         </button>
-        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates[0].length === 0}>
+        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates[0].length != 4}>
           Площадь
         </button>
       </div>
@@ -263,11 +263,11 @@ const MainForm = ({ onClose }) => {
         <p>Станций метро: {formData.metroStations.length}</p>
         <p>Площадей: {formData.zoneArea.length}</p>
       </div>
-
+      {errors[`area`] && <div className="error">{errors[`area`]}</div>}
       <button
         onClick={contactSubmit}
         disabled={
-          formData.area.coordinates[0].length === 0 ||
+          formData.area.coordinates[0].length != 4 ||
           !formData.name ||
           formData.road.length === 0 ||
           formData.zoneArea.length === 0
