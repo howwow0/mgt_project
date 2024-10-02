@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/FormStyles.css';
 
 const RoadForm = ({ roads, setRoads }) => {
   const [road, setRoad] = useState({
@@ -18,6 +19,7 @@ const RoadForm = ({ roads, setRoads }) => {
     const { name, value } = e.target;
     setRoad((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: '' }));
+
   };
 
   const handleCoordChange = (index, e) => {
@@ -111,6 +113,46 @@ const RoadForm = ({ roads, setRoads }) => {
     setRoads((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Валидация названия дороги
+    if (!road.name.trim()) {
+      newErrors.name = 'Название дороги не может быть пустым';
+      isValid = false;
+    }
+
+    // Валидация координат
+    if (road.geometry.coordinates.length !== 2) {
+      newErrors.coordinates = 'Не выбраны обе точки на карте';
+      isValid = false;
+    }
+
+    // Валидация утреннего трафика
+    if (road.morning_traffic <= 0) {
+      newErrors.morning_traffic = 'Утренний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вечернего трафика
+    if (road.evening_traffic <= 0) {
+      newErrors.evening_traffic = 'Вечерний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вместимости
+    if (road.capacity <= 0) {
+      newErrors.capacity = 'Вместимость должна быть положительным числом';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+  const removeRoad = (index) => {
+    setRoads((prev) => prev.filter((_, i) => i !== index));
+  };
   const addRoadSegment = () => {
     if (validateForm()) {
       setRoads([...roads, road]);
@@ -132,9 +174,9 @@ const RoadForm = ({ roads, setRoads }) => {
 
   return (
     <div>
-      <h3>Дорога</h3>
+      <h1>Дорога</h1>
 
-      <label>
+       <label>
         Название дороги:
         <input
           type="text"
@@ -182,6 +224,7 @@ const RoadForm = ({ roads, setRoads }) => {
         {errors.capacity && <span className="error">{errors.capacity}</span>}
       </label>
 
+
       <div>
         <h4>Координаты:</h4>
         {road.geometry.coordinates.map((coord, index) => (
@@ -207,12 +250,15 @@ const RoadForm = ({ roads, setRoads }) => {
         {errors.coordinates && <span className="error">{errors.coordinates}</span>}
       </div>
 
+      {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+
       <button
         onClick={addRoadSegment}
         disabled={road.geometry.coordinates.length !== 2 || !road.name}
       >
         Добавить дорогу
       </button>
+      </div>
 
       <ul>
         {Array.isArray(roads) && roads.length > 0 ? (

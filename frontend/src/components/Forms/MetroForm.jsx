@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/FormStyles.css';
 
 const MetroForm = ({ metroStations, setMetroStations }) => {
   const [metro, setMetro] = useState({
@@ -19,6 +20,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
     setMetro((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: '' }));
   };
+
 
   const handleCoordChange = (e) => {
     const { name, value } = e.target;
@@ -42,6 +44,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
     }
 
     // Валидация координат
+
     if (metro.position.coordinates.some(coord => isNaN(coord))) {
       newErrors.position = 'Координаты должны быть действительными числами';
       isValid = false;
@@ -68,13 +71,13 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
     setErrors(newErrors);
     return isValid;
   };
-
   const removeMetroStation = (index) => {
     setMetroStations((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addMetro = () => {
     if (validateForm()) {
+
       setMetroStations([...metroStations, metro]);
       setMetro({
         name: '',
@@ -90,6 +93,18 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
 
   return (
     <div>
+      <h1>Метро</h1>
+      <div className='trafficForms'>
+        <label>Название станции</label>
+            <input
+                type="text"
+                name="name"
+                value={metro.name}
+                onChange={handleChange}
+                placeholder="Введите название станции"
+                style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
+            />
+        <label>Утренний трафик</label>
       <h3>Метро</h3>
 
       <label>
@@ -134,6 +149,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           value={metro.morning_traffic}
           onChange={handleChange}
           placeholder="Утренний трафик"
+          style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
         />
         {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
       </label>
@@ -159,6 +175,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           onChange={handleChange}
           placeholder="Вместимость"
         />
+
         {errors.capacity && <span className="error">{errors.capacity}</span>}
       </label>
 

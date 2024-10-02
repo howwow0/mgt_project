@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/FormStyles.css';
 
 const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
   const [zoneArea, setZoneArea] = useState({
@@ -50,9 +51,9 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
 
   return (
     <div>
-      <h3>Площади</h3>
+      <h1>Площади</h1>
+      <div className='areaForms'>
 
-      {/* Ввод площади */}
       <label htmlFor="zone_area">Площадь:</label>
       <input
         id="zone_area"
@@ -64,7 +65,6 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       />
       {errors.zone_area && <span className="error">{errors.zone_area}</span>}
 
-      {/* Выпадающий список типов строительства */}
       <label htmlFor="construction_type_id">Тип строительства:</label>
       <select
         id="construction_type_id"
@@ -86,7 +86,6 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       >
         Добавить площадь
       </button>
-
       <ul>
         {Array.isArray(zoneAreas) && zoneAreas.length > 0 ? (
           zoneAreas.map((zone, index) => (

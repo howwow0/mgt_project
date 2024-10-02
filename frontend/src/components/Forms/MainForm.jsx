@@ -23,7 +23,7 @@ const MainForm = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value })); // Убедитесь, что name соответствует ключу в formData
   };
 
   useEffect(() => {
@@ -202,17 +202,20 @@ const MainForm = ({ onClose }) => {
 
   return (
     <div>
+      <h1>Форма</h1>
       <div>
-        <label htmlFor="name">Название:</label>
+        <label htmlFor="name" style={{marginRight: '10px'}}>Название</label>
         <input
           id="name"
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
+          style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)', boxShadow: '0 1px 5px rgba(0,0,0,0.4)'}}
         />
         {errors.name && <div className="error">{errors.name}</div>}
       </div>
+
 
       <div>
         <h3>Введите координаты (широта, долгота):</h3>
@@ -258,6 +261,7 @@ const MainForm = ({ onClose }) => {
       </div>
       {renderForm()}
       <div>
+
         <h2>Статистика</h2>
         <p>Дорог: {formData.road.length}</p>
         <p>Станций метро: {formData.metroStations.length}</p>

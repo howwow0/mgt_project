@@ -7,7 +7,8 @@ import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
 import "../styles/MapComponent.css";
 import ContactsButton from './ContactsButton';
-import '../styles/ZoneButton.css'
+import '../styles/ZoneButton.css';
+import '../styles/FormStyles.css';
 
 import MainForm from './Forms/MainForm'; // Импортируйте ваш компонент формы
 const MapComponent = () => {
@@ -118,18 +119,9 @@ const MapComponent = () => {
       )}
 
       {showToolbar && (
-        <div style={{
-          position: 'absolute',
-          left: '20px',
-          bottom: '80px',
-          backgroundColor: 'rgb(240, 240, 240, 0.8)',
-          borderRadius: '20px',
-          padding: '20px',
-          border: '1px solid rgba(85,69,150, 0.9)',
-          boxShadow: '0 1px 5px rgba(0,0,0,0.4)',
-          zIndex: 1000,
-        }}>
-          <h3>Добавление зоны</h3>
+        <div className='forms'>
+          <h1 style={{textAlign: 'center'}}>Добавление зоны</h1>
+        
           <MainForm onClose={() => setShowToolbar(false)}/>
           <button onClick={toggleToolbar} style={{ marginTop: '10px' }}>
             Отмена
