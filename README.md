@@ -49,6 +49,8 @@
 
 ## Развертка решения
 
+#[Видео с разверткой решения][(file:///media/user/README_2.md](https://disk.yandex.ru/i/m4Inm6gNkXh-cA))
+
 ### 1. Клонирование репозитория
 ```bash
 git clone <URL репозитория>
