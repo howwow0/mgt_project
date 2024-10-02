@@ -117,7 +117,8 @@ npm run frontend
 ```bash
 npm run backend
 ```
-
+#### Фронтенд находится по адресу http://localhost:3001
+#### Документация бекенда находится по адресу http://localhost:3000/api
 ---
 ## Состав команды 
  - Андрей Стародубов (@andrew-dot-exe)
