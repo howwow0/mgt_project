@@ -141,7 +141,7 @@ const MainForm = ({ onClose }) => {
     };
       const response = await fetchPostConstructionZones(formData);
       if (response.id) {
-        alert("Зона " + response.name +" добавлена.");
+        alert("Зона " + response.name +" добавлена. Обновите страницу");
         setFormData({
           name: "",
           area: { type: "Polygon", coordinates: [[]] },
