@@ -59,7 +59,10 @@
     background-color: rgba(85,69,150, 0.5);
     border: 1px solid rgba(85,69,150, 0.5);
 }
-
+.disabledButton:disabled:hover
+{
+    background-color: rgba(85,69,150, 0.5);
+}
 .errors
 {
     margin-top: 10px;

@@ -6,7 +6,6 @@ import CustomLeafletToggleControl from "./CustomLeafletToggleControl";
 import PolygonLayer from "./PolygonLayer";
 import MarkerLayer from "./MarkerLayer";
 import "../styles/MapComponent.css";
-import ContactsButton from './ContactsButton';
 import '../styles/ZoneButton.css';
 import '../styles/FormStyles.css';
 
