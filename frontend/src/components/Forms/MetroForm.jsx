@@ -196,6 +196,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
         )}
       </ul>
     </div>
+    </div>
   );
 };
 

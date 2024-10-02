@@ -98,6 +98,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
           <li>Нет добавленных площадей</li>
         )}
       </ul>
+      </div>
     </div>
   );
 };

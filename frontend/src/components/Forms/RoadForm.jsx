@@ -113,46 +113,6 @@ const RoadForm = ({ roads, setRoads }) => {
     setRoads((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    let isValid = true;
-
-    // Валидация названия дороги
-    if (!road.name.trim()) {
-      newErrors.name = 'Название дороги не может быть пустым';
-      isValid = false;
-    }
-
-    // Валидация координат
-    if (road.geometry.coordinates.length !== 2) {
-      newErrors.coordinates = 'Не выбраны обе точки на карте';
-      isValid = false;
-    }
-
-    // Валидация утреннего трафика
-    if (road.morning_traffic <= 0) {
-      newErrors.morning_traffic = 'Утренний трафик должен быть положительным числом';
-      isValid = false;
-    }
-
-    // Валидация вечернего трафика
-    if (road.evening_traffic <= 0) {
-      newErrors.evening_traffic = 'Вечерний трафик должен быть положительным числом';
-      isValid = false;
-    }
-
-    // Валидация вместимости
-    if (road.capacity <= 0) {
-      newErrors.capacity = 'Вместимость должна быть положительным числом';
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-  const removeRoad = (index) => {
-    setRoads((prev) => prev.filter((_, i) => i !== index));
-  };
   const addRoadSegment = () => {
     if (validateForm()) {
       setRoads([...roads, road]);
@@ -224,7 +184,7 @@ const RoadForm = ({ roads, setRoads }) => {
         {errors.capacity && <span className="error">{errors.capacity}</span>}
       </label>
 
-
+      <div>
       <div>
         <h4>Координаты:</h4>
         {road.geometry.coordinates.map((coord, index) => (

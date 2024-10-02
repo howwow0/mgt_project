@@ -201,7 +201,7 @@ const MainForm = ({ onClose }) => {
   };
 
   return (
-    <div>
+    <div >
       <h1>Форма</h1>
       <div>
         <label htmlFor="name" style={{marginRight: '10px'}}>Название</label>
