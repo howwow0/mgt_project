@@ -8,39 +8,94 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
       type: 'Point',
       coordinates: [],
     },
-    morning_traffic: 0,
-    evening_traffic: 0,
-    capacity: 0,
+    morning_traffic: "0",
+    evening_traffic: "0",
+    capacity: "0",
   });
 
   const [showMap, setShowMap] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMetro((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Валидация названия
+    if (!metro.name.trim()) {
+      newErrors.name = 'Название станции метро не может быть пустым';
+      isValid = false;
+    }
+
+    // Валидация координат
+    if (metro.position.coordinates.length === 0) {
+      newErrors.position = 'Не выбрана точка на карте';
+      isValid = false;
+    }
+
+    // Валидация утреннего трафика
+    if (metro.morning_traffic <= 0) {
+      newErrors.morning_traffic = 'Утренний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вечернего трафика
+    if (metro.evening_traffic <= 0) {
+      newErrors.evening_traffic = 'Вечерний трафик должен быть положительным числом';
+      isValid = false;
+    }
+
+    // Валидация вместимости
+    if (metro.capacity <= 0) {
+      newErrors.capacity = 'Вместимость должна быть положительным числом';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+  
+  const removeMetroStation = (index) => {
+    setMetroStations((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addMetro = () => {
-    if (metro.position.coordinates.length > 0) {
-      setMetroStations((prev) => [...prev, metro]);
-      // Сброс состояния формы
+    if (validateForm()) {
+      console.log(metro);
+      setMetroStations([...metroStations, metro]);
       setMetro({
         name: '',
-        position: { type: 'Point', coordinates: [] }, // Сброс позиции
+        position: { type: 'Point', coordinates: [] },
         morning_traffic: 0,
         evening_traffic: 0,
         capacity: 0,
       });
-      setShowMap(false); // Скрыть карту после добавления
+      setShowMap(false);
     } else {
-      alert('Пожалуйста, выберите позицию на карте.');
+      alert('Форма заполнена неверно.');
     }
   };
 
   const toggleMap = () => {
     setShowMap((prev) => !prev);
     if (showMap) {
-      setMetro((prev) => ({ ...prev, position: { type: 'Point', coordinates: [] } })); // Сбросить позицию, если карта скрыта
+      setMetro((prev) => ({ ...prev, position: { type: 'Point', coordinates: [] } }));
+    } 
+    else{
+      setMetro((prev) => ({
+        ...prev,
+        position: {
+          ...prev.position,
+          coordinates: [
+            [37.619500, 55.754000] // Липовые координаты
+          ],
+        },
+      }));
     }
   };
 
@@ -58,6 +113,22 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
                 style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
             />
         <label>Утренний трафик</label>
+      <h3>Метро</h3>
+
+      <label>
+        Название станции:
+        <input
+          type="text"
+          name="name"
+          value={metro.name}
+          onChange={handleChange}
+          placeholder="Введите название станции"
+        />
+        {errors.name && <span className="error">{errors.name}</span>}
+      </label>
+
+      <label>
+        Утренний трафик:
         <input
           type="number"
           name="morning_traffic"
@@ -100,10 +171,12 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
       
 
       <ul>
-        {metroStations.length > 0 ? (
+        {
+        Array.isArray(metroStations) && metroStations.length > 0 ? (
           metroStations.map((station, index) => (
             <li key={index}>
               Станция метро: {station.name}, Позиция: {station.position.coordinates[1]}, {station.position.coordinates[0]}
+              <button onClick={() => removeMetroStation(index)}>Удалить</button>
             </li>
           ))
         ) : (

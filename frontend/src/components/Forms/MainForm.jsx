@@ -22,13 +22,14 @@ const MainForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value })); // Убедитесь, что name соответствует ключу в formData
   };
 
   const handleFormDataChange = (key, value) => {
     if (formData.area.coordinates.length > 0) {
-      setFormData((prev) => ({ ...prev, [key]: value }));
+      setFormData(prev => ({ ...prev, [key]: value }));
       setShowMap(false);
+    console.log(formData);
     } else {
       alert("Пожалуйста, выберите область на карте.");
     }
@@ -161,6 +162,7 @@ const MainForm = () => {
         <input
           id="name"
           type="text"
+          name="name"
           value={formData.name}
           onChange={handleChange}
           style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)', boxShadow: '0 1px 5px rgba(0,0,0,0.4)'}}

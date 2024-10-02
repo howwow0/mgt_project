@@ -7,28 +7,42 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
     construction_type_id: 0,
   });
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setZoneArea((prev) => ({ ...prev, [name]: value }));
-    setErrorMessage(''); // Clear any previous error messages
+    setErrors((prev) => ({ ...prev, [name]: '' })); // Сброс ошибок при изменении
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Проверка площади
+    if (zoneArea.zone_area <= 0) {
+      newErrors.zone_area = 'Площадь должна быть положительным числом';
+      isValid = false;
+    }
+
+    // Проверка выбранного типа строительства
+    if (zoneArea.construction_type_id <= 0) {
+      newErrors.construction_type_id = 'Выберите тип строительства';
+      isValid = false;
+    } else if (zoneAreas.some(zone => zone.construction_type_id === zoneArea.construction_type_id)) {
+      newErrors.construction_type_id = 'Этот тип строительства уже выбран для другой площади';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const addZoneArea = () => {
-    if (zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0) {
-      setErrorMessage('Пожалуйста, заполните все поля корректно.');
-      return;
+    if (validateForm()) {
+      setZoneAreas([...zoneAreas, zoneArea]);
+      setZoneArea({ zone_area: 0, construction_type_id: 0 }); // Сброс формы
     }
-
-    if (zoneAreas.some(zone => zone.construction_type_id === zoneArea.construction_type_id)) {
-      setErrorMessage('Этот тип строительства уже выбран для другой площади.');
-      return;
-    }
-
-    setZoneAreas((prev) => [...prev, zoneArea]);
-    setZoneArea({ zone_area: 0, construction_type_id: 0 });
-    setErrorMessage(''); // Clear any previous error messages
   };
 
   const removeZoneArea = (index) => {
@@ -49,6 +63,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
         onChange={handleChange}
         placeholder="Введите площадь"
       />
+      {errors.zone_area && <span className="error">{errors.zone_area}</span>}
 
       {/* Label and ComboBox for Construction Type */}
       <label htmlFor="construction_type_id">Тип строительства</label>
@@ -60,16 +75,15 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       >
         <option value="0" disabled>Выберите тип строительства</option>
         {constructionTypes.map(type => (
-          // Only show the type if it is not already selected
-          !zoneAreas.some(zone => zone.construction_type_id === type.id) && (
-            <option key={type.id} value={type.id}>{type.name}</option>
-          )
+          // Показывать только те типы, которые еще не выбраны
+          <option key={type.id} value={type.id}>{type.name}</option>
         ))}
       </select>
-      
+      {errors.construction_type_id && <span className="error">{errors.construction_type_id}</span>}
+
       <button 
         onClick={addZoneArea} 
-        disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0 || zoneAreas.some(zone => zone.construction_type_id === zoneArea.construction_type_id)}
+        disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0}
       >
         Добавить площадь
       </button>
@@ -80,10 +94,10 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       
 
       <ul>
-        {zoneAreas && zoneAreas.length > 0 ? (
+        {Array.isArray(zoneAreas) && zoneAreas.length > 0 ? (
           zoneAreas.map((zone, index) => (
             <li key={index}>
-              {zone.zone_area} - {zone.construction_type_id} 
+              Площадь: {zone.zone_area}, Тип строительства: {constructionTypes.find(type => type.id === zone.construction_type_id)?.name}
               <button onClick={() => removeZoneArea(index)}>Удалить</button>
             </li>
           ))
