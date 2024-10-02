@@ -121,7 +121,8 @@ const MapComponent = () => {
       {showToolbar && (
         <div className='forms'>
           <h1 style={{textAlign: 'center'}}>Добавление зоны</h1>
-          <MainForm />
+        
+          <MainForm onClose={() => setShowToolbar(false)}/>
           <button onClick={toggleToolbar} style={{ marginTop: '10px' }}>
             Отмена
           </button>

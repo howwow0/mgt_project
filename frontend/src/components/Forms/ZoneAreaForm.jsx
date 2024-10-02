@@ -54,7 +54,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       <h1>Площади</h1>
       <div className='areaForms'>
 
-      <label htmlFor="zone_area">Площадь</label>
+      <label htmlFor="zone_area">Площадь:</label>
       <input
         id="zone_area"
         type="number"
@@ -65,8 +65,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       />
       {errors.zone_area && <span className="error">{errors.zone_area}</span>}
 
-      {/* Label and ComboBox for Construction Type */}
-      <label htmlFor="construction_type_id">Тип строительства</label>
+      <label htmlFor="construction_type_id">Тип строительства:</label>
       <select
         id="construction_type_id"
         name="construction_type_id"
@@ -87,17 +86,11 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       >
         Добавить площадь
       </button>
-
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-
-      </div>
-      
-
       <ul>
         {Array.isArray(zoneAreas) && zoneAreas.length > 0 ? (
           zoneAreas.map((zone, index) => (
             <li key={index}>
-              Площадь: {zone.zone_area}, Тип строительства: {constructionTypes.find(type => type.id === zone.construction_type_id)?.name}
+              Площадь: {zone.zone_area}, Тип строительства: {constructionTypes.find(type => type.id == zone.construction_type_id)?.name}
               <button onClick={() => removeZoneArea(index)}>Удалить</button>
             </li>
           ))

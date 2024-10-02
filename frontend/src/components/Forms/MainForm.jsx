@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RoadForm from './RoadForm';
 import MetroForm from './MetroForm';
 import ZoneAreaForm from './ZoneAreaForm';
+import { fetchConstructionTypes, fetchPostConstructionZones } from "../../api/api";
 import '../../styles/FormStyles.css';
 
-const MainForm = () => {
+const MainForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     name: "",
     area: {
       type: "Polygon",
-      coordinates: [],
+      coordinates: [[]],
     },
-    roads: [],
-    zoneAreas: [],
+    road: [],
+    zoneArea: [],
     metroStations: [],
   });
 
   const [errors, setErrors] = useState({});
-  const [showMap, setShowMap] = useState(false);
   const [activeForm, setActiveForm] = useState();
+  const [constructionTypes, setConstructionTypes] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value })); // Убедитесь, что name соответствует ключу в formData
   };
 
+  useEffect(() => {
+    const loadConstructionTypes = async () => {
+      try {
+        const types = await fetchConstructionTypes();
+        setConstructionTypes(types);
+      } catch (error) {
+        console.error("Ошибка при загрузке типов зон:", error);
+      }
+    };
+
+    loadConstructionTypes();
+  }, []);
+
   const handleFormDataChange = (key, value) => {
     if (formData.area.coordinates.length > 0) {
       setFormData(prev => ({ ...prev, [key]: value }));
-      setShowMap(false);
-    console.log(formData);
     } else {
-      alert("Пожалуйста, выберите область на карте.");
+      alert("Пожалуйста, введите координаты.");
     }
   };
 
@@ -46,28 +58,38 @@ const MainForm = () => {
     }
 
     // Area validation
-    if (formData.area.coordinates.length === 0) {
+    if (formData.area.coordinates[0].length != 4) {
       formIsValid = false;
-      formErrors.area = "Не выбрана область на карте";
+      formErrors.area = "Не введены координаты области (4 точки)";
     }
 
     // Roads validation
-    if (formData.roads.length === 0) {
+    if (formData.road.length === 0) {
       formIsValid = false;
-      formErrors.roads = "Отстутствует хотя бы 1 дорога";
-    }
-
-    // Metro validation
-    if (formData.metroStations.length === 0) {
-      formIsValid = false;
-      formErrors.metroStations = "Отстутствует поле метро";
+      formErrors.road = "Отстутствует хотя бы 1 дорога";
     }
 
     // Zone Areas validation
-    if (formData.zoneAreas.length === 0) {
+    if (formData.zoneArea.length === 0) {
       formIsValid = false;
-      formErrors.zoneAreas = "Отстутствует хотя бы 1 площадь у зоны";
+      formErrors.zoneArea = "Отстутствует хотя бы 1 площадь у зоны";
     }
+
+    // Coordinates validation
+    formData.area.coordinates[0].forEach((coord, index) => {
+      const [lng, lat] = coord; // Destructure to get longitude and latitude
+  
+      // Latitude validation
+      if (isNaN(lat) || lat < -90 || lat > 90) {
+        formIsValid = false;
+        formErrors[`lat${index}`] = `Широта ${index + 1} должна быть числом от -90 до 90`;
+      }
+      // Longitude validation
+      if (isNaN(lng) || lng < -180 || lng > 180) {
+        formIsValid = false;
+        formErrors[`lng${index}`] = `Долгота ${index + 1} должна быть числом от -180 до 180`;
+      }
+    });
 
     setErrors(formErrors);
     return formIsValid;
@@ -78,8 +100,8 @@ const MainForm = () => {
       case "road":
         return (
           <RoadForm
-            roads={formData.roads}
-            setRoads={(roads) => handleFormDataChange("roads", roads)}
+            roads={formData.road}
+            setRoads={(road) => handleFormDataChange("road", road)}
           />
         );
       case "metro":
@@ -94,15 +116,11 @@ const MainForm = () => {
       case "zone":
         return (
           <ZoneAreaForm
-            zoneAreas={formData.zoneAreas}
-            setZoneAreas={(zoneAreas) =>
-              handleFormDataChange("zoneAreas", zoneAreas)
+            zoneAreas={formData.zoneArea}
+            setZoneAreas={(zoneArea) =>
+              handleFormDataChange("zoneArea", zoneArea)
             }
-            constructionTypes={[
-              { id: 1, name: "Жилые помещения Категория 1", floor_area: "25.00" },
-              { id: 2, name: "Жилые помещения Категория 2", floor_area: "45.00" },
-              { id: 3, name: "Офисные помещения", floor_area: "35.00" },
-            ]}
+            constructionTypes={constructionTypes}
           />
         );
       default:
@@ -110,48 +128,76 @@ const MainForm = () => {
     }
   };
 
-  const toggleMap = () => {
-    setShowMap((prev) => !prev);
-    if (showMap) {
-      setFormData((prev) => ({
-        ...prev,
-        area: { type: "Polygon", coordinates: [] },
-      }));
-      setActiveForm();
-    } else{
-      setFormData((prev) => ({
-        ...prev,
-        area: {
-          ...prev.area,
-          coordinates: [
-            [37.618423, 55.753994],
-            [37.620000, 55.753994],
-            [37.620000, 55.754500],
-            [37.618423, 55.754500],
-            [37.618423, 55.753994],
-          ],
-        },
-      }));
-    }
-  };
-
   const contactSubmit = async () => {
     if (handleValidation()) {
+      const formattedCoordinates = [formData.area.coordinates[0]]; // Wrap in another array
+
+    const dataToSubmit = {
+      ...formData,
+      area: {
+        ...formData.area,
+        coordinates: formattedCoordinates, // Use the correctly formatted coordinates
+      },
+    };
       const response = await fetchPostConstructionZones(formData);
-      if (response.ok) {
-        alert("Зона добавлена.");
+      if (response.id) {
+        alert("Зона " + response.name +" добавлена.");
         setFormData({
           name: "",
-          area: { type: "Polygon", coordinates: [] },
-          roads: [],
-          zoneAreas: [],
+          area: { type: "Polygon", coordinates: [[]] },
+          road: [],
+          zoneArea: [],
           metroStations: [],
         });
+        setActiveForm(null);
+        onClose();
       }
     } else {
       alert("Form has errors.");
       console.log(errors);
     }
+  };
+
+  const handleCoordChange = (index, e) => {
+    const { name, value } = e.target;
+    const newCoordinates = [...formData.area.coordinates[0]]; // Copy existing coordinates
+
+    if (!newCoordinates[index]) {
+      newCoordinates[index] = [0, 0]; // Initialize if not present
+    }
+
+    const coordIndex = name === 'lat' ? 1 : 0; // Determine which coordinate to update
+    newCoordinates[index][coordIndex] = parseFloat(value); // Update specific coordinate
+
+    // Set the coordinates back to the nested array
+    setFormData((prev) => ({
+      ...prev,
+      area: { ...prev.area, coordinates: [newCoordinates] } // Wrap in another array
+    }));
+  };
+  const addCoordinate = () => {
+    if (formData.area.coordinates[0].length < 4) {
+      setFormData((prev) => {
+        const newCoordinates = [...prev.area.coordinates[0], [0, 0]]; // Add new coordinate as a pair
+        return {
+          ...prev,
+          area: {
+            ...prev.area,
+            coordinates: [newCoordinates] // Wrap in another array
+          }
+        };
+      });
+    } else {
+      alert("Вы можете добавить не более 4 координат.");
+    }
+  };
+
+  const removeCoordinate = (index) => {
+    const newCoordinates = formData.area.coordinates[0].filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      area: { ...prev.area, coordinates: [newCoordinates] } // Wrap in another array
+    }));
   };
 
   return (
@@ -167,45 +213,68 @@ const MainForm = () => {
           onChange={handleChange}
           style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)', boxShadow: '0 1px 5px rgba(0,0,0,0.4)'}}
         />
+        {errors.name && <div className="error">{errors.name}</div>}
       </div>
 
-      <button onClick={toggleMap} style={{margin: '10px 10px 0px 0px'}}>
-        {showMap ? "Сбросить область застройки" : "Выбрать область застройки"}
-      </button>
-
-      {showMap && (
-        <div style={{ overflow: 'auto', maxHeight: '400px', marginTop: '10px' }}>
-          <p>Выберите область на карте</p>
-         {/* Логика выбора области */}
-        </div>
-      )}
 
       <div>
-        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates.length === 0}>
+        <h3>Введите координаты (широта, долгота):</h3>
+        {formData.area.coordinates[0].map((coord, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              name="lat"
+              placeholder="Широта"
+              value={coord[1]} // Accessing latitude
+              onChange={(e) => handleCoordChange(index, e)}
+            />
+            {errors[`lat${index}`] && <div className="error">{errors[`lat${index}`]}</div>}
+            <input
+              type="text"
+              name="lng"
+              placeholder="Долгота"
+              value={coord[0]} // Accessing longitude
+              onChange={(e) => handleCoordChange(index, e)}
+            />
+            {errors[`lng${index}`] && <div className="error">{errors[`lng${index}`]}</div>}
+            <button onClick={() => removeCoordinate(index)}>Удалить</button>
+          </div>
+        ))}
+        <button 
+          onClick={addCoordinate} 
+          disabled={formData.area.coordinates[0].length >= 4}
+        >
+          Добавить координаты
+        </button>
+      </div>
+
+      <div>
+        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates[0].length != 4}>
           Дорога
         </button>
-        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates.length === 0}>
+        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates[0].length != 4}>
           Метро
         </button>
-        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates.length === 0}>
+        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates[0].length != 4}>
           Площадь
         </button>
       </div>
       {renderForm()}
       <div>
-        <h1>Статистика</h1>
-        <p>Дорог  {formData.roads.length}</p>
-        <p>Станций метро {formData.metroStations.length}</p>
-        <p>Площадей {formData.zoneAreas.length}</p>
-      </div>
 
+        <h2>Статистика</h2>
+        <p>Дорог: {formData.road.length}</p>
+        <p>Станций метро: {formData.metroStations.length}</p>
+        <p>Площадей: {formData.zoneArea.length}</p>
+      </div>
+      {errors[`area`] && <div className="error">{errors[`area`]}</div>}
       <button
         onClick={contactSubmit}
         disabled={
-          formData.area.coordinates.length === 0 ||
+          formData.area.coordinates[0].length != 4 ||
           !formData.name ||
-          formData.roads.length === 0 ||
-          formData.zoneAreas.length === 0
+          formData.road.length === 0 ||
+          formData.zoneArea.length === 0
         }
       >
         Сохранить область
