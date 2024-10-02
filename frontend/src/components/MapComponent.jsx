@@ -130,7 +130,7 @@ const MapComponent = () => {
           zIndex: 1000,
         }}>
           <h3>Добавление зоны</h3>
-          <MainForm />
+          <MainForm onClose={() => setShowToolbar(false)}/>
           <button onClick={toggleToolbar} style={{ marginTop: '10px' }}>
             Отмена
           </button>
