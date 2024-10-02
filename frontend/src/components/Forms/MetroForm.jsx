@@ -91,7 +91,7 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
         position: {
           ...prev.position,
           coordinates: [
-            [37.619500, 55.754000] // Липовые координаты
+            37.619500, 55.754000 // Липовые координаты
           ],
         },
       }));

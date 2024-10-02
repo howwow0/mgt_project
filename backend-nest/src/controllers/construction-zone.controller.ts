@@ -33,6 +33,7 @@ export class ConstructionZoneController {
   async createZone(
     @Body() createConstructionZoneDto: CreateConstructionZoneDto,
   ): Promise<ConstructionZone> {
+    console.log(createConstructionZoneDto);
     return this.constructionZoneService.create(createConstructionZoneDto);
   }
 }

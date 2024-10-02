@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RoadForm from './RoadForm';
 import MetroForm from './MetroForm';
 import ZoneAreaForm from './ZoneAreaForm';
+import {fetchConstructionTypes, fetchPostConstructionZones} from "../../api/api"
 import '../../styles/FormStyles.css';
 
 const MainForm = () => {
@@ -9,27 +10,41 @@ const MainForm = () => {
     name: "",
     area: {
       type: "Polygon",
-      coordinates: [],
+      coordinates: [[]],
     },
-    roads: [],
-    zoneAreas: [],
+    road: [],
+    zoneArea: [],
     metroStations: [],
   });
 
   const [errors, setErrors] = useState({});
   const [showMap, setShowMap] = useState(false);
   const [activeForm, setActiveForm] = useState();
-
+  
+  const [constructionTypes, setConstructionTypes] = useState([]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value })); // Убедитесь, что name соответствует ключу в formData
   };
 
+  useEffect(() => {
+    const loadConstructionTypes = async () => {
+      try {
+        const types = await fetchConstructionTypes();
+        setConstructionTypes(types);
+      } catch (error) {
+        console.error("Ошибка при загрузке типов зон:", error);
+      }
+    };
+
+    loadConstructionTypes();
+  }, []);
+
   const handleFormDataChange = (key, value) => {
     if (formData.area.coordinates.length > 0) {
       setFormData(prev => ({ ...prev, [key]: value }));
       setShowMap(false);
-    console.log(formData);
     } else {
       alert("Пожалуйста, выберите область на карте.");
     }
@@ -52,9 +67,9 @@ const MainForm = () => {
     }
 
     // Roads validation
-    if (formData.roads.length === 0) {
+    if (formData.road.length === 0) {
       formIsValid = false;
-      formErrors.roads = "Отстутствует хотя бы 1 дорога";
+      formErrors.road = "Отстутствует хотя бы 1 дорога";
     }
 
     // Metro validation
@@ -64,9 +79,9 @@ const MainForm = () => {
     }
 
     // Zone Areas validation
-    if (formData.zoneAreas.length === 0) {
+    if (formData.zoneArea.length === 0) {
       formIsValid = false;
-      formErrors.zoneAreas = "Отстутствует хотя бы 1 площадь у зоны";
+      formErrors.zoneArea = "Отстутствует хотя бы 1 площадь у зоны";
     }
 
     setErrors(formErrors);
@@ -78,8 +93,8 @@ const MainForm = () => {
       case "road":
         return (
           <RoadForm
-            roads={formData.roads}
-            setRoads={(roads) => handleFormDataChange("roads", roads)}
+            roads={formData.road}
+            setRoads={(road) => handleFormDataChange("road", road)}
           />
         );
       case "metro":
@@ -94,15 +109,11 @@ const MainForm = () => {
       case "zone":
         return (
           <ZoneAreaForm
-            zoneAreas={formData.zoneAreas}
-            setZoneAreas={(zoneAreas) =>
-              handleFormDataChange("zoneAreas", zoneAreas)
+            zoneAreas={formData.zoneArea}
+            setZoneAreas={(zoneArea) =>
+              handleFormDataChange("zoneArea", zoneArea)
             }
-            constructionTypes={[
-              { id: 1, name: "Жилые помещения Категория 1", floor_area: "25.00" },
-              { id: 2, name: "Жилые помещения Категория 2", floor_area: "45.00" },
-              { id: 3, name: "Офисные помещения", floor_area: "35.00" },
-            ]}
+            constructionTypes={constructionTypes}
           />
         );
       default:
@@ -123,13 +134,13 @@ const MainForm = () => {
         ...prev,
         area: {
           ...prev.area,
-          coordinates: [
+          coordinates: [[
             [37.618423, 55.753994],
             [37.620000, 55.753994],
             [37.620000, 55.754500],
             [37.618423, 55.754500],
             [37.618423, 55.753994],
-          ],
+          ]],
         },
       }));
     }
@@ -137,14 +148,15 @@ const MainForm = () => {
 
   const contactSubmit = async () => {
     if (handleValidation()) {
+      console.log(formData);
       const response = await fetchPostConstructionZones(formData);
       if (response.ok) {
         alert("Зона добавлена.");
         setFormData({
           name: "",
           area: { type: "Polygon", coordinates: [] },
-          roads: [],
-          zoneAreas: [],
+          road: [],
+          zoneArea: [],
           metroStations: [],
         });
       }
@@ -193,9 +205,9 @@ const MainForm = () => {
       {renderForm()}
       <div>
         <h2>Статистика</h2>
-        <p>Дорог: {formData.roads.length}</p>
+        <p>Дорог: {formData.road.length}</p>
         <p>Станций метро: {formData.metroStations.length}</p>
-        <p>Площадей: {formData.zoneAreas.length}</p>
+        <p>Площадей: {formData.zoneArea.length}</p>
       </div>
 
       <button
@@ -203,8 +215,8 @@ const MainForm = () => {
         disabled={
           formData.area.coordinates.length === 0 ||
           !formData.name ||
-          formData.roads.length === 0 ||
-          formData.zoneAreas.length === 0
+          formData.road.length === 0 ||
+          formData.zoneArea.length === 0
         }
       >
         Сохранить область
