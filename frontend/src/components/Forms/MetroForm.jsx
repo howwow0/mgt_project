@@ -95,20 +95,8 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
     <div>
       <h1>Метро</h1>
       <div className='trafficForms'>
-        <label>Название станции</label>
-            <input
-                type="text"
-                name="name"
-                value={metro.name}
-                onChange={handleChange}
-                placeholder="Введите название станции"
-                style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
-            />
-        <label>Утренний трафик</label>
-      <h3>Метро</h3>
 
-      <label>
-        Название станции:
+      <label> Название станции</label>
         <input
           type="text"
           name="name"
@@ -116,11 +104,10 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           onChange={handleChange}
           placeholder="Введите название станции"
         />
-        {errors.name && <span className="error">{errors.name}</span>}
-      </label>
+        
+      
 
-      <label>
-        Широта:
+      <label>Широта</label>
         <input
           type="number"
           name="latitude"
@@ -128,10 +115,8 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           onChange={handleCoordChange}
           placeholder="Широта"
         />
-      </label>
 
-      <label>
-        Долгота:
+      <label>Долгота</label>
         <input
           type="number"
           name="longitude"
@@ -139,10 +124,9 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           onChange={handleCoordChange}
           placeholder="Долгота"
         />
-      </label>
+      
 
-      <label>
-        Утренний трафик:
+      <label>Утренний трафик</label>
         <input
           type="number"
           name="morning_traffic"
@@ -151,11 +135,11 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           placeholder="Утренний трафик"
           style = {{borderRadius: '2px', border: '1px solid rgba(85,69,150, 0.9)'}}
         />
-        {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
-      </label>
+        
+      
 
       <label>
-        Вечерний трафик:
+        Вечерний трафик</label>
         <input
           type="number"
           name="evening_traffic"
@@ -163,39 +147,48 @@ const MetroForm = ({ metroStations, setMetroStations }) => {
           onChange={handleChange}
           placeholder="Вечерний трафик"
         />
-        {errors.evening_traffic && <span className="error">{errors.evening_traffic}</span>}
-      </label>
+        
+      
 
-      <label>
-        Вместимость:
+      <label>Пропускная способность</label>
         <input
           type="number"
           name="capacity"
           value={metro.capacity}
           onChange={handleChange}
-          placeholder="Вместимость"
+          placeholder="Пропускная способность"
         />
+        
 
-        {errors.capacity && <span className="error">{errors.capacity}</span>}
-      </label>
+      
+    </div>
 
-      <button onClick={addMetro} disabled={metro.position.coordinates.length === 0 || !metro.name}>
+    {/* Список ошибок */}
+    <div className='errors'>
+          {errors.name && <span className="error">{errors.name}</span>}
+          {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
+          {errors.evening_traffic && <span className="error">{errors.evening_traffic}</span>}
+          {errors.capacity && <span className="error">{errors.capacity}</span>}
+        </div>
+
+    <button onClick={addMetro} disabled={metro.position.coordinates.length === 0 || !metro.name} className='disabledButton' style={{marginTop: '10px'}}>
         Добавить метро
-      </button>
+    </button>
 
-      <ul>
-        {Array.isArray(metroStations) && metroStations.length > 0 ? (
-          metroStations.map((station, index) => (
-            <li key={index}>
-              Станция метро: {station.name}, Позиция: {station.position.coordinates[1]}, {station.position.coordinates[0]}
-              <button onClick={() => removeMetroStation(index)}>Удалить</button>
-            </li>
+    <ul>
+      {Array.isArray(metroStations) && metroStations.length > 0 ? (
+        metroStations.map((station, index) => (
+          <li key={index}>
+            Станция метро: {station.name}, Позиция: {station.position.coordinates[1]}, {station.position.coordinates[0]}
+            <button onClick={() => removeMetroStation(index)}>Удалить</button>
+          </li>
           ))
         ) : (
           <li>Нет добавленных станций метро</li>
         )}
-      </ul>
-    </div>
+    </ul>
+
+
     </div>
   );
 };

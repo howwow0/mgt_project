@@ -54,7 +54,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
       <h1>Площади</h1>
       <div className='areaForms'>
 
-      <label htmlFor="zone_area">Площадь:</label>
+      <label htmlFor="zone_area">Площадь</label>
       <input
         id="zone_area"
         type="number"
@@ -63,7 +63,7 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
         onChange={handleChange}
         placeholder="Введите площадь"
       />
-      {errors.zone_area && <span className="error">{errors.zone_area}</span>}
+      
 
       <label htmlFor="construction_type_id">Тип строительства:</label>
       <select
@@ -78,11 +78,19 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
           <option key={type.id} value={type.id}>{type.name}</option>
         ))}
       </select>
-      {errors.construction_type_id && <span className="error">{errors.construction_type_id}</span>}
+      
+      </div>
+
+      <div className='errors'>
+        {errors.zone_area && <span className="error">{errors.zone_area}</span>}
+        {errors.construction_type_id && <span className="error">{errors.construction_type_id}</span>}
+      </div>
 
       <button 
         onClick={addZoneArea} 
         disabled={zoneArea.zone_area <= 0 || zoneArea.construction_type_id <= 0}
+        className='disabledButton'
+        style={{marginTop: '10px'}}
       >
         Добавить площадь
       </button>
@@ -98,7 +106,6 @@ const ZoneAreaForm = ({ zoneAreas, setZoneAreas, constructionTypes }) => {
           <li>Нет добавленных площадей</li>
         )}
       </ul>
-      </div>
     </div>
   );
 };

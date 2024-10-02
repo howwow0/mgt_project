@@ -136,8 +136,9 @@ const RoadForm = ({ roads, setRoads }) => {
     <div>
       <h1>Дорога</h1>
 
-       <label>
-        Название дороги:
+      <div className='trafficForms'>
+
+        <label>Название дороги</label>
         <input
           type="text"
           name="name"
@@ -145,11 +146,9 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Введите название дороги"
         />
-        {errors.name && <span className="error">{errors.name}</span>}
-      </label>
+        
 
-      <label>
-        Утренний трафик:
+        <label>Утренний трафик</label>
         <input
           type="number"
           name="morning_traffic"
@@ -157,11 +156,8 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Утренний трафик"
         />
-        {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
-      </label>
-
-      <label>
-        Вечерний трафик:
+        
+        <label>Вечерний трафик</label>
         <input
           type="number"
           name="evening_traffic"
@@ -169,11 +165,9 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Вечерний трафик"
         />
-        {errors.evening_traffic && <span className="error">{errors.evening_traffic}</span>}
-      </label>
+       
 
-      <label>
-        Вместимость:
+        <label>Пропускная способность</label>
         <input
           type="number"
           name="capacity"
@@ -181,43 +175,53 @@ const RoadForm = ({ roads, setRoads }) => {
           onChange={handleChange}
           placeholder="Вместимость"
         />
-        {errors.capacity && <span className="error">{errors.capacity}</span>}
-      </label>
-
-      <div>
-      <div>
-        <h4>Координаты:</h4>
-        {road.geometry.coordinates.map((coord, index) => (
-          <div key={index}>
-            <input
-              type="number"
-              name="lng"
-              placeholder="Долгота"
-              value={coord[1]}
-              onChange={(e) => handleCoordChange(index, e)}
-            />
-            <input
-              type="number"
-              name="lat"
-              placeholder="Широта"
-              value={coord[0]}
-              onChange={(e) => handleCoordChange(index, e)}
-            />
-            <button onClick={() => removeCoordinate(index)}>Удалить</button>
-          </div>
-        ))}
-        <button onClick={addCoordinate} disabled={road.geometry.coordinates.length >= 2}>Добавить координаты</button>
-        {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+        
       </div>
 
-      {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+      <div className='errors'>
+        {errors.name && <span className="error">{errors.name}</span>}
+        {errors.morning_traffic && <span className="error">{errors.morning_traffic}</span>}
+        {errors.evening_traffic && <span className="error">{errors.evening_traffic}</span>}
+        {errors.capacity && <span className="error">{errors.capacity}</span>}
+      </div>
 
-      <button
-        onClick={addRoadSegment}
-        disabled={road.geometry.coordinates.length !== 2 || !road.name}
-      >
-        Добавить дорогу
-      </button>
+
+      <div>
+        <div>
+          <h1>Координаты</h1>
+          {road.geometry.coordinates.map((coord, index) => (
+            <div key={index} className='coordinates'>
+              <input
+                type="number"
+                name="lng"
+                placeholder="Долгота"
+                value={coord[1]}
+                onChange={(e) => handleCoordChange(index, e)}
+              />
+              <input
+                type="number"
+                name="lat"
+                placeholder="Широта"
+                value={coord[0]}
+                onChange={(e) => handleCoordChange(index, e)}
+              />
+              <button onClick={() => removeCoordinate(index)}>Удалить</button>
+            </div>
+          ))}
+          <button onClick={addCoordinate} disabled={road.geometry.coordinates.length >= 2} className='disabledButton'>Добавить координаты</button>
+          {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+        </div>
+
+        {errors.coordinates && <span className="error">{errors.coordinates}</span>}
+
+        <button
+          onClick={addRoadSegment}
+          disabled={road.geometry.coordinates.length !== 2 || !road.name}
+          className='disabledButton'
+          style={{marginTop: '10px'}}
+        >
+          Добавить дорогу
+        </button>
       </div>
 
       <ul>

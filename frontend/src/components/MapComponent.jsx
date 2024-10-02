@@ -87,7 +87,7 @@ const MapComponent = () => {
           visibleLayers={visibleLayers}
           handleLayerToggle={handleLayerToggle}
         />
-        <ContactsButton/>
+        {/* <ContactsButton/> */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -120,8 +120,6 @@ const MapComponent = () => {
 
       {showToolbar && (
         <div className='forms'>
-          <h1 style={{textAlign: 'center'}}>Добавление зоны</h1>
-        
           <MainForm onClose={() => setShowToolbar(false)}/>
           <button onClick={toggleToolbar} style={{ marginTop: '10px' }}>
             Отмена

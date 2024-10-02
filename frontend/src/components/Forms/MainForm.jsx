@@ -202,7 +202,7 @@ const MainForm = ({ onClose }) => {
 
   return (
     <div >
-      <h1>Форма</h1>
+      <h1>Форма добавления зоны</h1>
       <div>
         <label htmlFor="name" style={{marginRight: '10px'}}>Название</label>
         <input
@@ -218,44 +218,51 @@ const MainForm = ({ onClose }) => {
 
 
       <div>
-        <h3>Введите координаты (широта, долгота):</h3>
+        <p>Введите координаты (широта, долгота) </p>
         {formData.area.coordinates[0].map((coord, index) => (
-          <div key={index}>
+          <div key={index} className='coordinates'>
             <input
               type="text"
               name="lat"
               placeholder="Широта"
-              value={coord[1]} // Accessing latitude
+              value={coord[1]}
               onChange={(e) => handleCoordChange(index, e)}
             />
-            {errors[`lat${index}`] && <div className="error">{errors[`lat${index}`]}</div>}
+            
             <input
               type="text"
               name="lng"
               placeholder="Долгота"
-              value={coord[0]} // Accessing longitude
+              value={coord[0]}
               onChange={(e) => handleCoordChange(index, e)}
             />
-            {errors[`lng${index}`] && <div className="error">{errors[`lng${index}`]}</div>}
             <button onClick={() => removeCoordinate(index)}>Удалить</button>
           </div>
         ))}
+
+        {/* <div className='errors'>
+          {errors[`lat${index}`] && <div className="error">{errors[`lat${index}`]}</div>}
+          {errors[`lng${index}`] && <div className="error">{errors[`lng${index}`]}</div>}
+        </div> */}
+        
         <button 
           onClick={addCoordinate} 
           disabled={formData.area.coordinates[0].length >= 4}
+          className='disabledButton'
+          style={{marginTop: '8px'}}
         >
           Добавить координаты
         </button>
       </div>
 
-      <div>
-        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates[0].length != 4}>
+      <div className='buttonForm'>
+        <button onClick={() => setActiveForm("road")} disabled={formData.area.coordinates[0].length != 4} className='disabledButton'>
           Дорога
         </button>
-        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates[0].length != 4}>
+        <button onClick={() => setActiveForm("metro")} disabled={formData.area.coordinates[0].length != 4} className='disabledButton'>
           Метро
         </button>
-        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates[0].length != 4}>
+        <button onClick={() => setActiveForm("zone")} disabled={formData.area.coordinates[0].length != 4} className='disabledButton'>
           Площадь
         </button>
       </div>
@@ -276,6 +283,7 @@ const MainForm = ({ onClose }) => {
           formData.road.length === 0 ||
           formData.zoneArea.length === 0
         }
+        className='disabledButton'
       >
         Сохранить область
       </button>
